@@ -1,8 +1,11 @@
 package com.bikeservice.service;
 
+import com.bikeservice.dto.ResponseDTO;
 import com.bikeservice.dto.TestRideDTO;
 import com.bikeservice.repository.TestRideRepository;
+import com.bikeservice.util.Constant;
 import com.common.entity.TestRide;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -10,33 +13,35 @@ import java.util.stream.Collectors;
 
 @Service
 public class TestRideService {
+
     private final TestRideRepository testRideRepository;
 
     public TestRideService(TestRideRepository testRideRepository) {
         this.testRideRepository = testRideRepository;
     }
 
-    public TestRideDTO createTestRide(TestRideDTO dto) {
-        TestRide testRide = mapToEntity(dto);
-        TestRide saved = testRideRepository.save(testRide);
-        return mapToDto(saved);
+    public ResponseDTO create(TestRideDTO dto) {
+        final TestRide testRide = mapToEntity(dto);
+        final TestRide saved = this.testRideRepository.save(testRide);
+        return new ResponseDTO(HttpStatus.CREATED.value(), Constant.CREATE, mapToDto(saved));
     }
 
-    public List<TestRideDTO> getAllTestRides() {
-        return testRideRepository.findAll()
+    public ResponseDTO retrieve() {
+        final List<TestRideDTO> rides = this.testRideRepository.findAll()
                 .stream()
                 .map(this::mapToDto)
                 .collect(Collectors.toList());
+        return new ResponseDTO(HttpStatus.OK.value(), Constant.RETRIEVE, rides);
     }
 
-    public TestRideDTO getTestRideById(String id) {
-        TestRide testRide = testRideRepository.findById(id)
+    public ResponseDTO retrieveById(String id) {
+        final TestRide ride = this.testRideRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("TestRide not found with id: " + id));
-        return mapToDto(testRide);
+        return new ResponseDTO(HttpStatus.OK.value(), Constant.RETRIEVE, mapToDto(ride));
     }
 
-    public TestRideDTO updateTestRide(String id, TestRideDTO dto) {
-        TestRide existing = testRideRepository.findById(id)
+    public ResponseDTO update(String id, TestRideDTO dto) {
+        final TestRide existing = this.testRideRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("TestRide not found with id: " + id));
 
         existing.setCustomerId(dto.getCustomerId());
@@ -46,19 +51,20 @@ public class TestRideService {
         existing.setStatus(dto.getStatus());
         existing.setFeedback(dto.getFeedback());
 
-        TestRide updated = testRideRepository.save(existing);
-        return mapToDto(updated);
+        final TestRide updated = this.testRideRepository.save(existing);
+        return new ResponseDTO(HttpStatus.OK.value(), Constant.UPDATE, mapToDto(updated));
     }
 
-    public void deleteTestRide(String id) {
+    public ResponseDTO delete(String id) {
         if (!testRideRepository.existsById(id)) {
             throw new RuntimeException("TestRide not found with id: " + id);
         }
-        testRideRepository.deleteById(id);
+        this.testRideRepository.deleteById(id);
+        return new ResponseDTO(HttpStatus.OK.value(), Constant.DELETE, null);
     }
 
     private TestRideDTO mapToDto(TestRide tr) {
-        TestRideDTO dto = new TestRideDTO();
+        final TestRideDTO dto = new TestRideDTO();
         dto.setId(tr.getId());
         dto.setCustomerId(tr.getCustomerId());
         dto.setBikeId(tr.getBikeId());
@@ -70,7 +76,7 @@ public class TestRideService {
     }
 
     private TestRide mapToEntity(TestRideDTO dto) {
-        TestRide testRide = new TestRide();
+        final TestRide testRide = new TestRide();
         testRide.setId(dto.getId());
         testRide.setCustomerId(dto.getCustomerId());
         testRide.setBikeId(dto.getBikeId());

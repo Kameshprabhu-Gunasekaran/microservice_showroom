@@ -1,8 +1,11 @@
 package com.userService.service;
 
 import com.common.entity.SalesManager;
+import com.userService.dto.ResponseDTO;
 import com.userService.dto.SalesManagerDTO;
 import com.userService.repository.SalesManagerRepository;
+import com.userService.util.Constant;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -10,33 +13,35 @@ import java.util.stream.Collectors;
 
 @Service
 public class SalesManagerService {
+
     private final SalesManagerRepository salesManagerRepository;
 
     public SalesManagerService(SalesManagerRepository salesManagerRepository) {
         this.salesManagerRepository = salesManagerRepository;
     }
 
-    public SalesManagerDTO create(SalesManagerDTO dto) {
-        SalesManager manager = mapToEntity(dto);
-        SalesManager saved = salesManagerRepository.save(manager);
-        return mapToDto(saved);
+    public ResponseDTO create(SalesManagerDTO dto) {
+        final SalesManager manager = mapToEntity(dto);
+        final SalesManager saved = this.salesManagerRepository.save(manager);
+        return new ResponseDTO(HttpStatus.CREATED.value(), Constant.CREATE, mapToDto(saved));
     }
 
-    public List<SalesManagerDTO> getAll() {
-        return salesManagerRepository.findAll()
+    public ResponseDTO retrieve() {
+        final List<SalesManagerDTO> managers = this.salesManagerRepository.findAll()
                 .stream()
                 .map(this::mapToDto)
                 .collect(Collectors.toList());
+        return new ResponseDTO(HttpStatus.OK.value(), Constant.RETRIEVE, managers);
     }
 
-    public SalesManagerDTO getById(String id) {
-        SalesManager manager = salesManagerRepository.findById(id)
+    public ResponseDTO retrieveById(String id) {
+        final SalesManager manager = this.salesManagerRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("SalesManager not found with id: " + id));
-        return mapToDto(manager);
+        return new ResponseDTO(HttpStatus.OK.value(), Constant.RETRIEVE, mapToDto(manager));
     }
 
-    public SalesManagerDTO update(String id, SalesManagerDTO dto) {
-        SalesManager existing = salesManagerRepository.findById(id)
+    public ResponseDTO update(String id, SalesManagerDTO dto) {
+        final SalesManager existing = this.salesManagerRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("SalesManager not found with id: " + id));
 
         existing.setName(dto.getName());
@@ -44,18 +49,20 @@ public class SalesManagerService {
         existing.setContactNumber(dto.getContactNumber());
         existing.setShowroomId(dto.getShowroomId());
 
-        return mapToDto(salesManagerRepository.save(existing));
+        final SalesManager updated = this.salesManagerRepository.save(existing);
+        return new ResponseDTO(HttpStatus.OK.value(), Constant.UPDATE, mapToDto(updated));
     }
 
-    public void delete(String id) {
+    public ResponseDTO delete(String id) {
         if (!salesManagerRepository.existsById(id)) {
             throw new RuntimeException("SalesManager not found with id: " + id);
         }
-        salesManagerRepository.deleteById(id);
+        this.salesManagerRepository.deleteById(id);
+        return new ResponseDTO(HttpStatus.OK.value(), Constant.DELETE, null);
     }
 
     private SalesManager mapToEntity(SalesManagerDTO dto) {
-        SalesManager manager = new SalesManager();
+        final SalesManager manager = new SalesManager();
         manager.setId(dto.getId());
         manager.setName(dto.getName());
         manager.setAddress(dto.getAddress());
@@ -65,7 +72,7 @@ public class SalesManagerService {
     }
 
     private SalesManagerDTO mapToDto(SalesManager manager) {
-        SalesManagerDTO dto = new SalesManagerDTO();
+        final SalesManagerDTO dto = new SalesManagerDTO();
         dto.setId(manager.getId());
         dto.setName(manager.getName());
         dto.setAddress(manager.getAddress());

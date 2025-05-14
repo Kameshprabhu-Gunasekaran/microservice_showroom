@@ -1,8 +1,11 @@
 package com.bikeservice.service;
 
+import com.bikeservice.dto.ResponseDTO;
 import com.bikeservice.dto.SaleDTO;
 import com.bikeservice.repository.SaleRepository;
+import com.bikeservice.util.Constant;
 import com.common.entity.Sale;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -10,33 +13,35 @@ import java.util.stream.Collectors;
 
 @Service
 public class SaleService {
+
     private final SaleRepository saleRepository;
 
     public SaleService(SaleRepository saleRepository) {
         this.saleRepository = saleRepository;
     }
 
-    public SaleDTO createSale(SaleDTO saleDto) {
-        Sale sale = mapToEntity(saleDto);
-        Sale savedSale = saleRepository.save(sale);
-        return mapToDto(savedSale);
+    public ResponseDTO create(SaleDTO saleDto) {
+        final Sale sale = mapToEntity(saleDto);
+        final Sale savedSale = this.saleRepository.save(sale);
+        return new ResponseDTO(HttpStatus.CREATED.value(), Constant.CREATE, mapToDto(savedSale));
     }
 
-    public List<SaleDTO> getAllSales() {
-        return saleRepository.findAll()
+    public ResponseDTO retrieve() {
+        final List<SaleDTO> sales = this.saleRepository.findAll()
                 .stream()
                 .map(this::mapToDto)
                 .collect(Collectors.toList());
+        return new ResponseDTO(HttpStatus.OK.value(), Constant.RETRIEVE, sales);
     }
 
-    public SaleDTO getSaleById(String id) {
-        Sale sale = saleRepository.findById(id)
+    public ResponseDTO retrieveById(String id) {
+        final Sale sale = this.saleRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Sale not found with id: " + id));
-        return mapToDto(sale);
+        return new ResponseDTO(HttpStatus.OK.value(), Constant.RETRIEVE, mapToDto(sale));
     }
 
-    public SaleDTO updateSale(String id, SaleDTO updatedDto) {
-        Sale existingSale = saleRepository.findById(id)
+    public ResponseDTO update(String id, SaleDTO updatedDto) {
+        final Sale existingSale = this.saleRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Sale not found with id: " + id));
 
         existingSale.setSalesDate(updatedDto.getSalesDate());
@@ -44,19 +49,20 @@ public class SaleService {
         existingSale.setBikeId(updatedDto.getBikeId());
         existingSale.setCustomerId(updatedDto.getCustomerId());
 
-        Sale updatedSale = saleRepository.save(existingSale);
-        return mapToDto(updatedSale);
+        final Sale updatedSale = this.saleRepository.save(existingSale);
+        return new ResponseDTO(HttpStatus.OK.value(), Constant.UPDATE, mapToDto(updatedSale));
     }
 
-    public void deleteSale(String id) {
+    public ResponseDTO delete(String id) {
         if (!saleRepository.existsById(id)) {
             throw new RuntimeException("Sale not found with id: " + id);
         }
-        saleRepository.deleteById(id);
+        this.saleRepository.deleteById(id);
+        return new ResponseDTO(HttpStatus.OK.value(), Constant.DELETE, null);
     }
 
     private SaleDTO mapToDto(Sale sale) {
-        SaleDTO dto = new SaleDTO();
+        final SaleDTO dto = new SaleDTO();
         dto.setId(sale.getId());
         dto.setSalesDate(sale.getSalesDate());
         dto.setSalesPrice(sale.getSalesPrice());
@@ -66,7 +72,7 @@ public class SaleService {
     }
 
     private Sale mapToEntity(SaleDTO dto) {
-        Sale sale = new Sale();
+        final Sale sale = new Sale();
         sale.setSalesDate(dto.getSalesDate());
         sale.setSalesPrice(dto.getSalesPrice());
         sale.setBikeId(dto.getBikeId());

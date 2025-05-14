@@ -2,7 +2,10 @@ package com.userService.service;
 
 import com.common.entity.Customer;
 import com.userService.dto.CustomerDTO;
+import com.userService.dto.ResponseDTO;
 import com.userService.repository.CustomerRepository;
+import com.userService.util.Constant;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,27 +19,28 @@ public class CustomerService {
         this.customerRepository = customerRepository;
     }
 
-    public CustomerDTO createCustomer(CustomerDTO dto) {
-        Customer customer = mapToEntity(dto);
-        Customer saved = customerRepository.save(customer);
-        return mapToDto(saved);
+    public ResponseDTO create(CustomerDTO dto) {
+        final Customer customer = mapToEntity(dto);
+        Customer saved = this.customerRepository.save(customer);
+        return new ResponseDTO(HttpStatus.CREATED.value(), Constant.CREATE, mapToDto(saved));
     }
 
-    public List<CustomerDTO> getAllCustomers() {
-        return customerRepository.findAll()
+    public ResponseDTO retrieveAll() {
+        final List<CustomerDTO> customers = this.customerRepository.findAll()
                 .stream()
                 .map(this::mapToDto)
                 .collect(Collectors.toList());
+        return new ResponseDTO(HttpStatus.OK.value(), Constant.RETRIEVE, customers);
     }
 
-    public CustomerDTO getCustomerById(String id) {
-        Customer customer = customerRepository.findById(id)
+    public ResponseDTO retrieveById(String id) {
+        final Customer customer = this.customerRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Customer not found with id: " + id));
-        return mapToDto(customer);
+        return new ResponseDTO(HttpStatus.OK.value(), Constant.RETRIEVE, mapToDto(customer));
     }
 
-    public CustomerDTO updateCustomer(String id, CustomerDTO dto) {
-        Customer existing = customerRepository.findById(id)
+    public ResponseDTO update(String id, CustomerDTO dto) {
+        final Customer existing = this.customerRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Customer not found with id: " + id));
 
         existing.setName(dto.getName());
@@ -45,19 +49,20 @@ public class CustomerService {
         existing.setContactNumber(dto.getContactNumber());
         existing.setSalesmanId(dto.getSalesmanId());
 
-        Customer updated = customerRepository.save(existing);
-        return mapToDto(updated);
+        final Customer updated = this.customerRepository.save(existing);
+        return new ResponseDTO(HttpStatus.OK.value(), Constant.UPDATE, mapToDto(updated));
     }
 
-    public void deleteCustomer(String id) {
+    public ResponseDTO delete(String id) {
         if (!customerRepository.existsById(id)) {
             throw new RuntimeException("Customer not found with id: " + id);
         }
-        customerRepository.deleteById(id);
+        this.customerRepository.deleteById(id);
+        return new ResponseDTO(HttpStatus.OK.value(), Constant.DELETE, null);
     }
 
     private CustomerDTO mapToDto(Customer customer) {
-        CustomerDTO dto = new CustomerDTO();
+        final CustomerDTO dto = new CustomerDTO();
         dto.setId(customer.getId());
         dto.setName(customer.getName());
         dto.setEmail(customer.getEmail());
@@ -68,7 +73,7 @@ public class CustomerService {
     }
 
     private Customer mapToEntity(CustomerDTO dto) {
-        Customer customer = new Customer();
+        final Customer customer = new Customer();
         customer.setId(dto.getId());
         customer.setName(dto.getName());
         customer.setEmail(dto.getEmail());

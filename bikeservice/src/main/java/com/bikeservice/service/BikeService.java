@@ -1,8 +1,11 @@
 package com.bikeservice.service;
 
 import com.bikeservice.dto.BikeDTO;
+import com.bikeservice.dto.ResponseDTO;
 import com.bikeservice.repository.BikeRepository;
+import com.bikeservice.util.Constant;
 import com.common.entity.Bike;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -10,33 +13,35 @@ import java.util.stream.Collectors;
 
 @Service
 public class BikeService {
+
     private final BikeRepository bikeRepository;
 
     public BikeService(BikeRepository bikeRepository) {
         this.bikeRepository = bikeRepository;
     }
 
-    public BikeDTO createBike(BikeDTO bikeDto) {
-        com.common.entity.Bike bike = mapToEntityForCreate(bikeDto);
-        Bike savedBike = bikeRepository.save(bike);
-        return mapToDto(savedBike);
+    public ResponseDTO create(BikeDTO bikeDto) {
+        final Bike bike = mapToEntity(bikeDto);
+        final Bike savedBike = this.bikeRepository.save(bike);
+        return new ResponseDTO(HttpStatus.CREATED.value(), Constant.CREATE, mapToDto(savedBike));
     }
 
-    public List<BikeDTO> getAllBikes() {
-        return bikeRepository.findAll()
+    public ResponseDTO retrieve() {
+        final List<BikeDTO> bikes = this.bikeRepository.findAll()
                 .stream()
                 .map(this::mapToDto)
                 .collect(Collectors.toList());
+        return new ResponseDTO(HttpStatus.OK.value(), Constant.RETRIEVE, bikes);
     }
 
-    public BikeDTO getBikeById(String id) {
-        Bike bike = bikeRepository.findById(id)
+    public ResponseDTO retrieveById(String id) {
+        final Bike bike = this.bikeRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Bike not found with id: " + id));
-        return mapToDto(bike);
+        return new ResponseDTO(HttpStatus.OK.value(), Constant.RETRIEVE, mapToDto(bike));
     }
 
-    public BikeDTO updateBike(String id, BikeDTO updatedDto) {
-        Bike existingBike = bikeRepository.findById(id)
+    public ResponseDTO update(String id, BikeDTO updatedDto) {
+        final Bike existingBike = this.bikeRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Bike not found with id: " + id));
 
         existingBike.setName(updatedDto.getName());
@@ -46,19 +51,20 @@ public class BikeService {
         existingBike.setStock(updatedDto.getStock());
         existingBike.setSalesmanId(updatedDto.getSalesmanId());
 
-        Bike updatedBike = bikeRepository.save(existingBike);
-        return mapToDto(updatedBike);
+        final Bike updatedBike = this.bikeRepository.save(existingBike);
+        return new ResponseDTO(HttpStatus.OK.value(), Constant.UPDATE, mapToDto(updatedBike));
     }
 
-    public void deleteBike(String id) {
+    public ResponseDTO delete(String id) {
         if (!bikeRepository.existsById(id)) {
             throw new RuntimeException("Bike not found with id: " + id);
         }
-        bikeRepository.deleteById(id);
+        this.bikeRepository.deleteById(id);
+        return new ResponseDTO(HttpStatus.OK.value(), Constant.DELETE, null);
     }
 
     private BikeDTO mapToDto(Bike bike) {
-        BikeDTO dto = new BikeDTO();
+        final BikeDTO dto = new BikeDTO();
         dto.setId(bike.getId());
         dto.setName(bike.getName());
         dto.setCc(bike.getCc());
@@ -69,8 +75,8 @@ public class BikeService {
         return dto;
     }
 
-    private Bike mapToEntityForCreate(BikeDTO dto) {
-        Bike bike = new Bike();
+    private Bike mapToEntity(BikeDTO dto) {
+        final Bike bike = new Bike();
         bike.setName(dto.getName());
         bike.setCc(dto.getCc());
         bike.setMileage(dto.getMileage());

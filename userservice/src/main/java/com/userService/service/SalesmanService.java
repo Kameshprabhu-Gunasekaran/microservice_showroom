@@ -1,8 +1,11 @@
 package com.userService.service;
 
 import com.common.entity.Salesman;
+import com.userService.dto.ResponseDTO;
 import com.userService.dto.SalesmanDTO;
 import com.userService.repository.SalesmanRepository;
+import com.userService.util.Constant;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -10,33 +13,35 @@ import java.util.stream.Collectors;
 
 @Service
 public class SalesmanService {
+
     private final SalesmanRepository salesmanRepository;
 
     public SalesmanService(SalesmanRepository salesmanRepository) {
         this.salesmanRepository = salesmanRepository;
     }
 
-    public SalesmanDTO createSalesman(SalesmanDTO dto) {
-        Salesman salesman = mapToEntity(dto);
-        Salesman saved = salesmanRepository.save(salesman);
-        return mapToDto(saved);
+    public ResponseDTO create(SalesmanDTO dto) {
+        final Salesman salesman = mapToEntity(dto);
+        final Salesman saved = this.salesmanRepository.save(salesman);
+        return new ResponseDTO(HttpStatus.CREATED.value(), Constant.CREATE, mapToDto(saved));
     }
 
-    public List<SalesmanDTO> getAllSalesmen() {
-        return salesmanRepository.findAll()
+    public ResponseDTO retrieve() {
+        final List<SalesmanDTO> salesmen = this.salesmanRepository.findAll()
                 .stream()
                 .map(this::mapToDto)
                 .collect(Collectors.toList());
+        return new ResponseDTO(HttpStatus.OK.value(), Constant.RETRIEVE, salesmen);
     }
 
-    public SalesmanDTO getSalesmanById(String id) {
-        Salesman salesman = salesmanRepository.findById(id)
+    public ResponseDTO retrieveById(String id) {
+        final Salesman salesman = this.salesmanRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Salesman not found with id: " + id));
-        return mapToDto(salesman);
+        return new ResponseDTO(HttpStatus.OK.value(), Constant.RETRIEVE, mapToDto(salesman));
     }
 
-    public SalesmanDTO updateSalesman(String id, SalesmanDTO dto) {
-        Salesman existing = salesmanRepository.findById(id)
+    public ResponseDTO update(String id, SalesmanDTO dto) {
+        final Salesman existing = this.salesmanRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Salesman not found with id: " + id));
 
         existing.setName(dto.getName());
@@ -46,19 +51,20 @@ public class SalesmanService {
         existing.setContactNumber(dto.getContactNumber());
         existing.setSalesManagerId(dto.getSalesManagerId());
 
-        Salesman updated = salesmanRepository.save(existing);
-        return mapToDto(updated);
+        final Salesman updated = this.salesmanRepository.save(existing);
+        return new ResponseDTO(HttpStatus.OK.value(), Constant.UPDATE, mapToDto(updated));
     }
 
-    public void deleteSalesman(String id) {
+    public ResponseDTO delete(String id) {
         if (!salesmanRepository.existsById(id)) {
             throw new RuntimeException("Salesman not found with id: " + id);
         }
-        salesmanRepository.deleteById(id);
+        this.salesmanRepository.deleteById(id);
+        return new ResponseDTO(HttpStatus.OK.value(), Constant.DELETE, null);
     }
 
     private SalesmanDTO mapToDto(Salesman salesman) {
-        SalesmanDTO dto = new SalesmanDTO();
+        final SalesmanDTO dto = new SalesmanDTO();
         dto.setId(salesman.getId());
         dto.setName(salesman.getName());
         dto.setSalary(salesman.getSalary());
@@ -70,7 +76,7 @@ public class SalesmanService {
     }
 
     private Salesman mapToEntity(SalesmanDTO dto) {
-        Salesman salesman = new Salesman();
+        final Salesman salesman = new Salesman();
         salesman.setId(dto.getId());
         salesman.setName(dto.getName());
         salesman.setSalary(dto.getSalary());
