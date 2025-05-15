@@ -20,31 +20,31 @@ public class RoleService {
     }
 
     public ResponseDTO create(ERole eRole) {
-        Role role = new Role();
+        final Role role = new Role();
         role.setRole(eRole);
         role.setCreatedBy("SYSTEM");
-        Role savedRole = roleRepository.save(role);
+        final Role savedRole = this.roleRepository.save(role);
         return new ResponseDTO(Constant.CREATE,savedRole,String.valueOf(HttpStatus.CREATED.value()));
     }
 
     public ResponseDTO retrieveAll() {
-        List<Role> roles = roleRepository.findAll();
+        final List<Role> roles = this.roleRepository.findAll();
         return new ResponseDTO(Constant.RETRIEVE, roles, String.valueOf(HttpStatus.OK.value()));
     }
 
     public ResponseDTO retrieveById(String id) {
-        Role role = roleRepository.findById(id)
+        final Role role = this.roleRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Role not found with id: " + id));
         return new ResponseDTO(Constant.RETRIEVE, role, String.valueOf(HttpStatus.OK.value()));
     }
 
     public ResponseDTO update(String id, ERole updatedRole) {
-        Role existingRole = roleRepository.findById(id)
+        final Role existingRole = this.roleRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Role not found with id: " + id));
 
         existingRole.setRole(updatedRole);
         existingRole.setUpdatedBy("SYSTEM");
-        Role updated = roleRepository.save(existingRole);
+        final Role updated = this.roleRepository.save(existingRole);
         return new ResponseDTO(Constant.UPDATE, updated, String.valueOf(HttpStatus.OK.value()));
     }
 
@@ -52,7 +52,7 @@ public class RoleService {
         if (!roleRepository.existsById(id)) {
             throw new RuntimeException("Role not found with id: " + id);
         }
-        roleRepository.deleteById(id);
+        this.roleRepository.deleteById(id);
         return new ResponseDTO(Constant.DELETE, null, String.valueOf(HttpStatus.OK.value()));
     }
 }

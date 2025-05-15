@@ -6,10 +6,10 @@ import org.springframework.boot.autoconfigure.domain.EntityScan;
 
 @SpringBootApplication
 @EntityScan("com.common.entity")
-public class AuthserviceApplication {
+public class AuthServiceApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(AuthserviceApplication.class, args);
+		SpringApplication.run(AuthServiceApplication.class, args);
 	}
 
 }

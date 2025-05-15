@@ -19,7 +19,7 @@ public class UserService {
     }
 
     public ResponseDTO create(User user) {
-        if (userRepository.findByEmail(user.getEmail()).isPresent()) {
+        if (this.userRepository.findByEmail(user.getEmail()).isPresent()) {
             throw new RuntimeException("Email already exists: " + user.getEmail());
         }
 
