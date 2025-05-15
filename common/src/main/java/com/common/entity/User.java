@@ -2,35 +2,38 @@ package com.common.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import org.hibernate.annotations.CurrentTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.Instant;
-import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "feedback")
-public class Feedback {
+@Table(name = "users")
+public class User {
+
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name = "id")
     private String id;
 
-    @Column(name = "customer_id")
-    private String customerId;
+    @Column(name = "user_name")
+    private String userName;
 
-    @Column(name = "message", columnDefinition = "TEXT")
-    private String message;
+    @Column(name = "password")
+    private String password;
 
-    @Column(name = "rating")
-    private int rating;
+    @Column(name = "email")
+    private String email;
 
-    @Column(name = "submitted_at")
-    private LocalDateTime submittedAt;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "role_id")
+    private Role role;
 
     @Column(name = "created_by")
     private String createdBy;
@@ -54,36 +57,36 @@ public class Feedback {
         this.id = id;
     }
 
-    public String getCustomerId() {
-        return customerId;
+    public String getUserName() {
+        return userName;
     }
 
-    public void setCustomerId(String customerId) {
-        this.customerId = customerId;
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
-    public String getMessage() {
-        return message;
+    public String getPassword() {
+        return password;
     }
 
-    public void setMessage(String message) {
-        this.message = message;
+    public void setPassword(String password) {
+        this.password = password;
     }
 
-    public int getRating() {
-        return rating;
+    public String getEmail() {
+        return email;
     }
 
-    public void setRating(int rating) {
-        this.rating = rating;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
-    public LocalDateTime getSubmittedAt() {
-        return submittedAt;
+    public Role getRole() {
+        return role;
     }
 
-    public void setSubmittedAt(LocalDateTime submittedAt) {
-        this.submittedAt = submittedAt;
+    public void setRole(Role role) {
+        this.role = role;
     }
 
     public String getCreatedBy() {
