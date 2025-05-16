@@ -2,6 +2,7 @@ package com.bikeservice.service;
 
 import com.bikeservice.dto.ResponseDTO;
 import com.bikeservice.dto.SaleDTO;
+import com.bikeservice.exception.BadRequestServiceException;
 import com.bikeservice.repository.SaleRepository;
 import com.bikeservice.util.Constant;
 import com.common.entity.Sale;
@@ -36,13 +37,13 @@ public class SaleService {
 
     public ResponseDTO retrieveById(String id) {
         final Sale sale = this.saleRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Sale not found with id: " + id));
+                .orElseThrow(() -> new BadRequestServiceException(Constant.ID_DOES_NOT_EXIST + id));
         return new ResponseDTO(HttpStatus.OK.value(), Constant.RETRIEVE, mapToDto(sale));
     }
 
     public ResponseDTO update(String id, SaleDTO updatedDto) {
         final Sale existingSale = this.saleRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Sale not found with id: " + id));
+                .orElseThrow(() -> new BadRequestServiceException(Constant.ID_DOES_NOT_EXIST + id));
 
         existingSale.setSalesDate(updatedDto.getSalesDate());
         existingSale.setSalesPrice(updatedDto.getSalesPrice());
@@ -55,7 +56,7 @@ public class SaleService {
 
     public ResponseDTO delete(String id) {
         if (!saleRepository.existsById(id)) {
-            throw new RuntimeException("Sale not found with id: " + id);
+            throw new BadRequestServiceException(Constant.ID_DOES_NOT_EXIST + id);
         }
         this.saleRepository.deleteById(id);
         return new ResponseDTO(HttpStatus.OK.value(), Constant.DELETE, null);

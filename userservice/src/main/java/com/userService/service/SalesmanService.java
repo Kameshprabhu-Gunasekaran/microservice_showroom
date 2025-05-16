@@ -3,6 +3,7 @@ package com.userService.service;
 import com.common.entity.Salesman;
 import com.userService.dto.ResponseDTO;
 import com.userService.dto.SalesmanDTO;
+import com.userService.exception.BadRequestServiceException;
 import com.userService.repository.SalesmanRepository;
 import com.userService.util.Constant;
 import org.springframework.http.HttpStatus;
@@ -36,13 +37,13 @@ public class SalesmanService {
 
     public ResponseDTO retrieveById(String id) {
         final Salesman salesman = this.salesmanRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Salesman not found with id: " + id));
+                .orElseThrow(() -> new BadRequestServiceException(Constant.ID_DOES_NOT_EXIST + id));
         return new ResponseDTO(HttpStatus.OK.value(), Constant.RETRIEVE, mapToDto(salesman));
     }
 
     public ResponseDTO update(String id, SalesmanDTO dto) {
         final Salesman existing = this.salesmanRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Salesman not found with id: " + id));
+                .orElseThrow(() -> new BadRequestServiceException(Constant.ID_DOES_NOT_EXIST + id));
 
         existing.setName(dto.getName());
         existing.setSalary(dto.getSalary());
@@ -57,7 +58,7 @@ public class SalesmanService {
 
     public ResponseDTO delete(String id) {
         if (!salesmanRepository.existsById(id)) {
-            throw new RuntimeException("Salesman not found with id: " + id);
+            throw new BadRequestServiceException(Constant.ID_DOES_NOT_EXIST + id);
         }
         this.salesmanRepository.deleteById(id);
         return new ResponseDTO(HttpStatus.OK.value(), Constant.DELETE, null);

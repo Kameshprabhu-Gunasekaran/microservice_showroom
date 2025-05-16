@@ -1,6 +1,7 @@
 package com.authservice.service;
 
 import com.authservice.dto.ResponseDTO;
+import com.authservice.exception.BadRequestServiceException;
 import com.authservice.repository.RoleRepository;
 import com.authservice.util.Constant;
 import com.common.entity.ERole;
@@ -34,13 +35,13 @@ public class RoleService {
 
     public ResponseDTO retrieveById(String id) {
         final Role role = this.roleRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Role not found with id: " + id));
+                .orElseThrow(() -> new BadRequestServiceException(Constant.ID_DOES_NOT_EXIST));
         return new ResponseDTO(Constant.RETRIEVE, role, String.valueOf(HttpStatus.OK.value()));
     }
 
     public ResponseDTO update(String id, ERole updatedRole) {
         final Role existingRole = this.roleRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Role not found with id: " + id));
+                .orElseThrow(() -> new BadRequestServiceException(Constant.ID_DOES_NOT_EXIST));
 
         existingRole.setRole(updatedRole);
         existingRole.setUpdatedBy("SYSTEM");
@@ -50,7 +51,7 @@ public class RoleService {
 
     public ResponseDTO delete(String id) {
         if (!roleRepository.existsById(id)) {
-            throw new RuntimeException("Role not found with id: " + id);
+            throw new BadRequestServiceException(Constant.ID_DOES_NOT_EXIST);
         }
         this.roleRepository.deleteById(id);
         return new ResponseDTO(Constant.DELETE, null, String.valueOf(HttpStatus.OK.value()));

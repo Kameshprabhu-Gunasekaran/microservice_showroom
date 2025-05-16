@@ -2,6 +2,7 @@ package com.bikeservice.service;
 
 import com.bikeservice.dto.ResponseDTO;
 import com.bikeservice.dto.ShowroomDTO;
+import com.bikeservice.exception.BadRequestServiceException;
 import com.bikeservice.repository.ShowroomRepository;
 import com.bikeservice.util.Constant;
 import com.common.entity.Showroom;
@@ -36,13 +37,13 @@ public class ShowroomService {
 
     public ResponseDTO retrieveById(String id) {
         final Showroom showroom = this.showroomRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Showroom not found with id: " + id));
+                .orElseThrow(() -> new BadRequestServiceException(Constant.ID_DOES_NOT_EXIST + id));
         return new ResponseDTO(HttpStatus.OK.value(), Constant.RETRIEVE, mapToDto(showroom));
     }
 
     public ResponseDTO update(String id, ShowroomDTO updatedDto) {
         final Showroom existing = this.showroomRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Showroom not found with id: " + id));
+                .orElseThrow(() -> new BadRequestServiceException(Constant.ID_DOES_NOT_EXIST + id));
 
         existing.setName(updatedDto.getName());
         existing.setBrand(updatedDto.getBrand());
@@ -55,7 +56,7 @@ public class ShowroomService {
 
     public ResponseDTO delete(String id) {
         if (!showroomRepository.existsById(id)) {
-            throw new RuntimeException("Showroom not found with id: " + id);
+            throw new BadRequestServiceException(Constant.ID_DOES_NOT_EXIST + id);
         }
         this.showroomRepository.deleteById(id);
         return new ResponseDTO(HttpStatus.OK.value(), Constant.DELETE, null);

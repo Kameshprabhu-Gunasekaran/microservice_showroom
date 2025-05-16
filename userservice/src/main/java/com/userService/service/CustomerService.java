@@ -3,6 +3,7 @@ package com.userService.service;
 import com.common.entity.Customer;
 import com.userService.dto.CustomerDTO;
 import com.userService.dto.ResponseDTO;
+import com.userService.exception.BadRequestServiceException;
 import com.userService.repository.CustomerRepository;
 import com.userService.util.Constant;
 import org.springframework.http.HttpStatus;
@@ -21,7 +22,7 @@ public class CustomerService {
 
     public ResponseDTO create(CustomerDTO dto) {
         final Customer customer = mapToEntity(dto);
-        Customer saved = this.customerRepository.save(customer);
+        final Customer saved = this.customerRepository.save(customer);
         return new ResponseDTO(HttpStatus.CREATED.value(), Constant.CREATE, mapToDto(saved));
     }
 
@@ -35,13 +36,13 @@ public class CustomerService {
 
     public ResponseDTO retrieveById(String id) {
         final Customer customer = this.customerRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Customer not found with id: " + id));
+                .orElseThrow(() -> new BadRequestServiceException(Constant.ID_DOES_NOT_EXIST + id));
         return new ResponseDTO(HttpStatus.OK.value(), Constant.RETRIEVE, mapToDto(customer));
     }
 
     public ResponseDTO update(String id, CustomerDTO dto) {
         final Customer existing = this.customerRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Customer not found with id: " + id));
+                .orElseThrow(() -> new BadRequestServiceException(Constant.ID_DOES_NOT_EXIST + id));
 
         existing.setName(dto.getName());
         existing.setEmail(dto.getEmail());
@@ -55,7 +56,7 @@ public class CustomerService {
 
     public ResponseDTO delete(String id) {
         if (!customerRepository.existsById(id)) {
-            throw new RuntimeException("Customer not found with id: " + id);
+            throw new BadRequestServiceException(Constant.ID_DOES_NOT_EXIST + id);
         }
         this.customerRepository.deleteById(id);
         return new ResponseDTO(HttpStatus.OK.value(), Constant.DELETE, null);

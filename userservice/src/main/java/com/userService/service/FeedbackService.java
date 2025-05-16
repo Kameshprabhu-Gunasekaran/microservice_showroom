@@ -3,6 +3,7 @@ package com.userService.service;
 import com.common.entity.Feedback;
 import com.userService.dto.FeedbackDTO;
 import com.userService.dto.ResponseDTO;
+import com.userService.exception.BadRequestServiceException;
 import com.userService.repository.FeedbackRepository;
 import com.userService.util.Constant;
 import org.springframework.http.HttpStatus;
@@ -38,13 +39,13 @@ public class FeedbackService {
 
     public ResponseDTO retrieveById(String id) {
         final Feedback feedback = this.feedbackRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Feedback not found with id: " + id));
+                .orElseThrow(() -> new BadRequestServiceException(Constant.ID_DOES_NOT_EXIST + id));
         return new ResponseDTO(HttpStatus.OK.value(), Constant.RETRIEVE, mapToDto(feedback));
     }
 
     public ResponseDTO delete(String id) {
         if (!feedbackRepository.existsById(id)) {
-            throw new RuntimeException("Feedback not found with id: " + id);
+            throw new BadRequestServiceException(Constant.ID_DOES_NOT_EXIST + id);
         }
         this.feedbackRepository.deleteById(id);
         return new ResponseDTO(HttpStatus.OK.value(), Constant.DELETE, null);

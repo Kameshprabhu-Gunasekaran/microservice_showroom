@@ -1,6 +1,7 @@
 package com.authservice.service;
 
 import com.authservice.dto.ResponseDTO;
+import com.authservice.exception.BadRequestServiceException;
 import com.authservice.repository.UserRepository;
 import com.authservice.util.Constant;
 import com.common.entity.User;
@@ -20,7 +21,7 @@ public class UserService {
 
     public ResponseDTO create(User user) {
         if (this.userRepository.findByEmail(user.getEmail()).isPresent()) {
-            throw new RuntimeException("Email already exists: " + user.getEmail());
+            throw new BadRequestServiceException(Constant.EMAIL_ALREADY_EXIST + user.getEmail());
         }
 
         user.setCreatedBy("SYSTEM");
@@ -35,13 +36,13 @@ public class UserService {
 
     public ResponseDTO retrieveById(String id) {
         final User user = this.userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
+                .orElseThrow(() -> new BadRequestServiceException(Constant.ID_DOES_NOT_EXIST));
         return new ResponseDTO(Constant.RETRIEVE, user, String.valueOf(HttpStatus.OK.value()));
     }
 
     public ResponseDTO update(String id, User updatedUser) {
         final User existingUser = this.userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
+                .orElseThrow(() -> new BadRequestServiceException(Constant.ID_DOES_NOT_EXIST));
 
         existingUser.setUserName(updatedUser.getUserName());
         existingUser.setEmail(updatedUser.getEmail());
@@ -55,7 +56,7 @@ public class UserService {
 
     public ResponseDTO delete(String id) {
         if (!userRepository.existsById(id)) {
-            throw new RuntimeException("User not found with id: " + id);
+            throw new BadRequestServiceException(Constant.ID_DOES_NOT_EXIST);
         }
         this.userRepository.deleteById(id);
         return new ResponseDTO(Constant.DELETE, null, String.valueOf(HttpStatus.OK.value()));

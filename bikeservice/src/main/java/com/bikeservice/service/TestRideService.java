@@ -2,6 +2,7 @@ package com.bikeservice.service;
 
 import com.bikeservice.dto.ResponseDTO;
 import com.bikeservice.dto.TestRideDTO;
+import com.bikeservice.exception.BadRequestServiceException;
 import com.bikeservice.repository.TestRideRepository;
 import com.bikeservice.util.Constant;
 import com.common.entity.TestRide;
@@ -36,13 +37,13 @@ public class TestRideService {
 
     public ResponseDTO retrieveById(String id) {
         final TestRide ride = this.testRideRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("TestRide not found with id: " + id));
+                .orElseThrow(() -> new BadRequestServiceException(Constant.ID_DOES_NOT_EXIST + id));
         return new ResponseDTO(HttpStatus.OK.value(), Constant.RETRIEVE, mapToDto(ride));
     }
 
     public ResponseDTO update(String id, TestRideDTO dto) {
         final TestRide existing = this.testRideRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("TestRide not found with id: " + id));
+                .orElseThrow(() -> new BadRequestServiceException(Constant.ID_DOES_NOT_EXIST + id));
 
         existing.setCustomerId(dto.getCustomerId());
         existing.setBikeId(dto.getBikeId());
@@ -57,7 +58,7 @@ public class TestRideService {
 
     public ResponseDTO delete(String id) {
         if (!testRideRepository.existsById(id)) {
-            throw new RuntimeException("TestRide not found with id: " + id);
+            throw new BadRequestServiceException(Constant.ID_DOES_NOT_EXIST + id);
         }
         this.testRideRepository.deleteById(id);
         return new ResponseDTO(HttpStatus.OK.value(), Constant.DELETE, null);
