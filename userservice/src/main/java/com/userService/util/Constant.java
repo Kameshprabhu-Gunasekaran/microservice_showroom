@@ -11,4 +11,5 @@ public class Constant {
     public static final String DELETE = "Deleted successfully";
     public static final String NOT_FOUND = "Resource not found.";
     public static final String ID_DOES_NOT_EXIST = "Id does not exist";
+    public static final String USER_DELETED = "User deleted successfully";
 }
