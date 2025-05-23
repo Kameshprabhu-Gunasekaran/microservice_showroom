@@ -13,18 +13,19 @@ import java.util.function.Function;
 @Service
 public class JwtService {
 
-    private static final String SECRET_KEY = "my-very-secret-key-that-should-be-very-long-and-safe";
+    private static final String SECRET_KEY = "83a29bc2-a865-4b70-a645-4c7f83dd6282";
     private static final long EXPIRATION_TIME = 3600000;
 
     private Key getSignInKey() {
         return Keys.hmacShaKeyFor(SECRET_KEY.getBytes());
     }
 
-    public String generateToken(String username) {
+    public String generateToken(String username, String role) {
         return Jwts.builder()
                 .setSubject(username)
+                .claim("role", role)
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
+                .setExpiration(new Date(System.currentTimeMillis() + 86400000))
                 .signWith(getSignInKey(), SignatureAlgorithm.HS256)
                 .compact();
     }

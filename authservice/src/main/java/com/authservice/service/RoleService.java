@@ -56,5 +56,10 @@ public class RoleService {
         this.roleRepository.deleteById(id);
         return new ResponseDTO(Constant.DELETE, null, String.valueOf(HttpStatus.OK.value()));
     }
+
+    public Role getRoleByEnum(ERole role) {
+        return roleRepository.findByRole(role)
+                .orElseThrow(() -> new BadRequestServiceException("Role not found: " + role.name()));
+    }
 }
 

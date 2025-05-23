@@ -22,7 +22,7 @@ import java.util.Collections;
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-    private final String SECRET_KEY = "c99a1efa-bbf0-4284-bac4-259f1068bd0f";
+    private final String SECRET_KEY = "83a29bc2-a865-4b70-a645-4c7f83dd6282";
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,

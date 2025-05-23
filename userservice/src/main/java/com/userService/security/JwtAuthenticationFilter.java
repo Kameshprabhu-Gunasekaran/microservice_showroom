@@ -18,7 +18,7 @@ import java.util.Collections;
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-    private final String SECRET_KEY = "9869e981-06e0-4872-ab83-5299f34f593d";
+    private final String SECRET_KEY = "83a29bc2-a865-4b70-a645-4c7f83dd6282";
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,

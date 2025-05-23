@@ -1,8 +1,11 @@
 package com.authservice.controller;
 
+import com.authservice.dto.RegisterRequestDTO;
 import com.authservice.dto.ResponseDTO;
 import com.authservice.service.UserService;
 import com.common.entity.User;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -45,5 +48,11 @@ public class UserController {
     @DeleteMapping("/remove/{id}")
     public ResponseDTO delete(@PathVariable("id") String id) {
         return this.userService.delete(id);
+    }
+
+    @PostMapping("/register")
+    public ResponseEntity<ResponseDTO> register(@RequestBody RegisterRequestDTO request) {
+        ResponseDTO response = userService.register(request);
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 }
