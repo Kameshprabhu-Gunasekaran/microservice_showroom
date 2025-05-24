@@ -31,9 +31,6 @@ public class User {
     @Column(name = "email")
     private String email;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "role_id")
-    private Role role;
 
     @Column(name = "created_by")
     private String createdBy;
@@ -81,13 +78,6 @@ public class User {
         this.email = email;
     }
 
-    public Role getRole() {
-        return role;
-    }
-
-    public void setRole(Role role) {
-        this.role = role;
-    }
 
     public String getCreatedBy() {
         return createdBy;

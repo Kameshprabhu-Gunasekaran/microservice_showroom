@@ -6,7 +6,6 @@ public class UserDTO {
     private String userName;
     private String password;
     private String email;
-    private String role;
     private String createdBy;
     private String updatedBy;
 
@@ -42,13 +41,6 @@ public class UserDTO {
         this.email = email;
     }
 
-    public String getRole() {
-        return role;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
-    }
 
     public String getCreatedBy() {
         return createdBy;

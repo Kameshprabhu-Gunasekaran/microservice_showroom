@@ -1,11 +1,14 @@
 package com.authservice.service;
 
 import com.authservice.dto.ResponseDTO;
+import com.authservice.dto.RoleDTO;
 import com.authservice.exception.BadRequestServiceException;
 import com.authservice.repository.RoleRepository;
+import com.authservice.repository.UserRepository;
 import com.authservice.util.Constant;
 import com.common.entity.ERole;
 import com.common.entity.Role;
+import com.common.entity.User;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -15,17 +18,21 @@ import java.util.List;
 public class RoleService {
 
     private final RoleRepository roleRepository;
+    private final UserRepository userRepository;
 
-    public RoleService(RoleRepository roleRepository) {
+    public RoleService(RoleRepository roleRepository, UserRepository userRepository) {
         this.roleRepository = roleRepository;
+        this.userRepository = userRepository;
     }
 
-    public ResponseDTO create(ERole eRole) {
+    public ResponseDTO create(RoleDTO roleDTO) {
+        final User user=this.userRepository.findById(roleDTO.getUserId()).orElseThrow(()->new BadRequestServiceException(Constant.NOT_FOUND));
         final Role role = new Role();
-        role.setRole(eRole);
+        role.setUser(user);
+        role.setRole(roleDTO.getRole());
         role.setCreatedBy("SYSTEM");
-        final Role savedRole = this.roleRepository.save(role);
-        return new ResponseDTO(Constant.CREATE,savedRole,String.valueOf(HttpStatus.CREATED.value()));
+        role.setUpdatedBy("SYSTEM");
+        return new ResponseDTO(Constant.CREATE, this.roleRepository.save(role),HttpStatus.OK.getReasonPhrase());
     }
 
     public ResponseDTO retrieveAll() {

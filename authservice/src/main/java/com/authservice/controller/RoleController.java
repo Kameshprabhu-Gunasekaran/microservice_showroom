@@ -1,6 +1,7 @@
 package com.authservice.controller;
 
 import com.authservice.dto.ResponseDTO;
+import com.authservice.dto.RoleDTO;
 import com.authservice.service.RoleService;
 import com.common.entity.ERole;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -13,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/v1/role")
+@RequestMapping("/api/v1/roles")
 public class RoleController {
 
     private final RoleService roleService;
@@ -23,8 +24,8 @@ public class RoleController {
     }
 
     @PostMapping("/create")
-    public ResponseDTO create(@RequestBody ERole role) {
-        return this.roleService.create(role);
+    public ResponseDTO create(@RequestBody RoleDTO roleDTO) {
+        return this.roleService.create(roleDTO);
     }
 
     @GetMapping("/retrieve")

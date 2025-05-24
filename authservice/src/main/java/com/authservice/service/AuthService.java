@@ -22,15 +22,15 @@ public class AuthService {
     }
 
     public ResponseDTO login(UserSignInRequestDTO request) {
-        User user = userRepository.findByEmail(request.getUsername())
+        User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new BadRequestServiceException("Invalid credentials"));
 
-        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+        if (!request.getPassword().equals(user.getPassword())) {
             throw new BadRequestServiceException("Invalid credentials");
         }
 
-        String role = user.getRole().getRole().name();
-        String token = jwtService.generateToken(user.getEmail(), role);
+        //String role = user.getRole().getRole().name();
+        String token = jwtService.generateToken(user.getEmail(), user.getUserName());
 
         return new ResponseDTO("LOGIN_SUCCESS", token, "200");
     }

@@ -8,6 +8,7 @@ public class RoleDTO {
     private ERole role;
     private String createdBy;
     private String updatedBy;
+    private String userId;
 
     public String getId() {
         return id;
@@ -39,5 +40,13 @@ public class RoleDTO {
 
     public void setUpdatedBy(String updatedBy) {
         this.updatedBy = updatedBy;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 }

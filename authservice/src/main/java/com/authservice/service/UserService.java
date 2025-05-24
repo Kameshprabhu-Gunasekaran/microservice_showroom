@@ -28,9 +28,6 @@ public class UserService {
     }
 
     public ResponseDTO create(User user) {
-        if (this.userRepository.findByEmail(user.getEmail()).isPresent()) {
-            throw new BadRequestServiceException(Constant.EMAIL_ALREADY_EXIST + user.getEmail());
-        }
 
         user.setCreatedBy("SYSTEM");
         final User savedUser = this.userRepository.save(user);
