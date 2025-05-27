@@ -1,4 +1,4 @@
-package com.userService.dto;
+package com.authservice.dto;
 
 public class RegisterRequestDTO {
 

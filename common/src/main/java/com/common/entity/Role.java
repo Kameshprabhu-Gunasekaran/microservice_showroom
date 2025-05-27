@@ -25,7 +25,7 @@ public class Role {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "role")
-    private String role;
+    private ERole role;
 
     @Column(name = "created_by")
     private String createdBy;
@@ -41,6 +41,10 @@ public class Role {
     @Column(name = "updated_at")
     private Instant updatedAt;
 
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
     public String getId() {
         return id;
     }
@@ -49,11 +53,11 @@ public class Role {
         this.id = id;
     }
 
-    public String getRole() {
+    public ERole getRole() {
         return role;
     }
 
-    public void setRole(String role) {
+    public void setRole(ERole role) {
         this.role = role;
     }
 
@@ -88,5 +92,12 @@ public class Role {
     public void setUpdatedAt(Instant updatedAt) {
         this.updatedAt = updatedAt;
     }
-    
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
 }

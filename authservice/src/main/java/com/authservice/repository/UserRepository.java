@@ -1,4 +1,4 @@
-package com.userService.repository;
+package com.authservice.repository;
 
 import com.common.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;

@@ -1,15 +1,14 @@
-package com.userService.service;
+package com.authservice.service;
 
-
+import com.authservice.dto.ResponseDTO;
+import com.authservice.dto.RoleDTO;
+import com.authservice.exception.BadRequestServiceException;
+import com.authservice.repository.RoleRepository;
+import com.authservice.repository.UserRepository;
+import com.authservice.util.Constant;
 import com.common.entity.ERole;
 import com.common.entity.Role;
 import com.common.entity.User;
-import com.userService.dto.ResponseDTO;
-import com.userService.dto.RoleDTO;
-import com.userService.exception.BadRequestServiceException;
-import com.userService.repository.RoleRepository;
-import com.userService.repository.UserRepository;
-import com.userService.util.Constant;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -27,25 +26,24 @@ public class RoleService {
     }
 
     public ResponseDTO create(RoleDTO roleDTO) {
-        final User user=this.userRepository.findById(roleDTO.getUserId())
-                .orElseThrow(()->new BadRequestServiceException(Constant.NOT_FOUND));
+        final User user=this.userRepository.findById(roleDTO.getUserId()).orElseThrow(()->new BadRequestServiceException(Constant.NOT_FOUND));
         final Role role = new Role();
         role.setUser(user);
         role.setRole(roleDTO.getRole());
         role.setCreatedBy("SYSTEM");
         role.setUpdatedBy("SYSTEM");
-        return new ResponseDTO(HttpStatus.OK.value(), Constant.CREATE, this.roleRepository.save(role));
+        return new ResponseDTO(Constant.CREATE, this.roleRepository.save(role),HttpStatus.OK.getReasonPhrase());
     }
 
     public ResponseDTO retrieveAll() {
         final List<Role> roles = this.roleRepository.findAll();
-        return new ResponseDTO(HttpStatus.OK.value(), Constant.RETRIEVE, roles);
+        return new ResponseDTO(Constant.RETRIEVE, roles, String.valueOf(HttpStatus.OK.value()));
     }
 
     public ResponseDTO retrieveById(String id) {
         final Role role = this.roleRepository.findById(id)
                 .orElseThrow(() -> new BadRequestServiceException(Constant.ID_DOES_NOT_EXIST));
-        return new ResponseDTO(HttpStatus.OK.value(), Constant.RETRIEVE, role);
+        return new ResponseDTO(Constant.RETRIEVE, role, String.valueOf(HttpStatus.OK.value()));
     }
 
     public ResponseDTO update(String id, ERole updatedRole) {
@@ -55,7 +53,7 @@ public class RoleService {
         existingRole.setRole(updatedRole);
         existingRole.setUpdatedBy("SYSTEM");
         final Role updated = this.roleRepository.save(existingRole);
-        return new ResponseDTO(HttpStatus.OK.value(), Constant.UPDATE, updated);
+        return new ResponseDTO(Constant.UPDATE, updated, String.valueOf(HttpStatus.OK.value()));
     }
 
     public ResponseDTO delete(String id) {
@@ -63,7 +61,7 @@ public class RoleService {
             throw new BadRequestServiceException(Constant.ID_DOES_NOT_EXIST);
         }
         this.roleRepository.deleteById(id);
-        return new ResponseDTO(HttpStatus.OK.value(), Constant.DELETE, null);
+        return new ResponseDTO(Constant.DELETE, null, String.valueOf(HttpStatus.OK.value()));
     }
 
     public Role getRoleByEnum(ERole role) {

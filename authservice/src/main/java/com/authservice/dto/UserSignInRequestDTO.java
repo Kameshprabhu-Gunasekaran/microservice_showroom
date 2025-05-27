@@ -2,6 +2,7 @@ package com.authservice.dto;
 
 public class UserSignInRequestDTO {
 
+    private String username;
     private String email;
     private String password;
 
@@ -13,6 +14,13 @@ public class UserSignInRequestDTO {
         this.email = email;
     }
 
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
 
     public String getPassword() {
         return password;
