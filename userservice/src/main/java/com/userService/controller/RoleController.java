@@ -1,9 +1,9 @@
-package com.authservice.controller;
+package com.userService.controller;
 
-import com.authservice.dto.ResponseDTO;
-import com.authservice.dto.RoleDTO;
-import com.authservice.service.RoleService;
 import com.common.entity.ERole;
+import com.userService.dto.ResponseDTO;
+import com.userService.dto.RoleDTO;
+import com.userService.service.RoleService;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;

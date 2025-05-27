@@ -1,9 +1,9 @@
-package com.authservice.controller;
+package com.userService.controller;
 
-import com.authservice.dto.RegisterRequestDTO;
-import com.authservice.dto.ResponseDTO;
-import com.authservice.service.UserService;
 import com.common.entity.User;
+import com.userService.dto.RegisterRequestDTO;
+import com.userService.dto.ResponseDTO;
+import com.userService.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -26,7 +26,7 @@ public class UserController {
     }
 
     @PostMapping("/create")
-    public ResponseDTO create(@RequestBody User user) {
+    public com.userService.dto.ResponseDTO create(@RequestBody User user) {
         return this.userService.create(user);
     }
 

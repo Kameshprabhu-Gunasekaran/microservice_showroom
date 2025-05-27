@@ -1,4 +1,4 @@
-package com.authservice.repository;
+package com.userService.repository;
 
 import com.common.entity.ERole;
 import com.common.entity.Role;
@@ -11,4 +11,6 @@ import java.util.Optional;
 public interface RoleRepository extends JpaRepository<Role, String> {
 
     Optional<Role> findByRole(ERole role);
+
+    Role findRoleByUserId(final String  userId);
 }

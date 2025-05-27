@@ -31,7 +31,6 @@ public class User {
     @Column(name = "email")
     private String email;
 
-
     @Column(name = "created_by")
     private String createdBy;
 
@@ -45,6 +44,8 @@ public class User {
     @UpdateTimestamp
     @Column(name = "updated_at")
     private Instant updatedAt;
+
+
 
     public String getId() {
         return id;

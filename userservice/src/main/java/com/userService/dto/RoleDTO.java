@@ -1,4 +1,4 @@
-package com.authservice.dto;
+package com.userService.dto;
 
 import com.common.entity.ERole;
 
