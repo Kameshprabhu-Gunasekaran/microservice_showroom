@@ -1,9 +1,9 @@
-package com.authservice.controller;
+package com.userService.controller;
 
-import com.authservice.dto.ResponseDTO;
-import com.authservice.dto.RoleDTO;
-import com.authservice.service.RoleService;
-import com.common.entity.ERole;
+import com.common.entity.Role;
+import com.userService.dto.ResponseDTO;
+import com.userService.dto.RoleDTO;
+import com.userService.service.RoleService;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -39,7 +39,7 @@ public class RoleController {
     }
 
     @PutMapping("/update/{id}")
-    public ResponseDTO update(@PathVariable("id") String id, @RequestBody ERole updatedRole) {
+    public ResponseDTO update(@PathVariable("id") String id, @RequestBody String updatedRole) {
         return this.roleService.update(id, updatedRole);
     }
 

@@ -1,11 +1,9 @@
-package com.authservice.dto;
-
-import com.common.entity.ERole;
+package com.userService.dto;
 
 public class RoleDTO {
 
     private String id;
-    private ERole role;
+    private String role;
     private String createdBy;
     private String updatedBy;
     private String userId;
@@ -18,11 +16,11 @@ public class RoleDTO {
         this.id = id;
     }
 
-    public ERole getRole() {
+    public String getRole() {
         return role;
     }
 
-    public void setRole(ERole role) {
+    public void setRole(String role) {
         this.role = role;
     }
 

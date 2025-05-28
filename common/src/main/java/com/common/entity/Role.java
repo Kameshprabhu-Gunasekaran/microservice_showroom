@@ -2,8 +2,6 @@ package com.common.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -23,9 +21,8 @@ public class Role {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
-    @Enumerated(EnumType.STRING)
     @Column(name = "role")
-    private ERole role;
+    private String role;
 
     @Column(name = "created_by")
     private String createdBy;
@@ -53,11 +50,11 @@ public class Role {
         this.id = id;
     }
 
-    public ERole getRole() {
+    public String getRole() {
         return role;
     }
 
-    public void setRole(ERole role) {
+    public void setRole(String role) {
         this.role = role;
     }
 

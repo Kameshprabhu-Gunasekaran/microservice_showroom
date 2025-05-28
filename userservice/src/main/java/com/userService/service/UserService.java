@@ -1,14 +1,12 @@
-package com.authservice.service;
+package com.userService.service;
 
-import com.authservice.dto.RegisterRequestDTO;
-import com.authservice.dto.ResponseDTO;
-import com.authservice.exception.BadRequestServiceException;
-import com.authservice.repository.RoleRepository;
-import com.authservice.repository.UserRepository;
-import com.authservice.util.Constant;
-import com.common.entity.ERole;
-import com.common.entity.Role;
 import com.common.entity.User;
+import com.userService.dto.RegisterRequestDTO;
+import com.userService.dto.ResponseDTO;
+import com.userService.exception.BadRequestServiceException;
+import com.userService.repository.RoleRepository;
+import com.userService.repository.UserRepository;
+import com.userService.util.Constant;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -31,18 +29,18 @@ public class UserService {
 
         user.setCreatedBy("SYSTEM");
         final User savedUser = this.userRepository.save(user);
-        return new ResponseDTO(Constant.CREATE, savedUser, String.valueOf(HttpStatus.CREATED.value()));
+        return new ResponseDTO(HttpStatus.CREATED.value(), Constant.CREATE, user);
     }
 
     public ResponseDTO retrieveAll() {
         final List<User> users = this.userRepository.findAll();
-        return new ResponseDTO(Constant.RETRIEVE, users, String.valueOf(HttpStatus.OK.value()));
+        return new ResponseDTO(HttpStatus.OK.value(), Constant.RETRIEVE, users);
     }
 
     public ResponseDTO retrieveById(String id) {
         final User user = this.userRepository.findById(id)
                 .orElseThrow(() -> new BadRequestServiceException(Constant.ID_DOES_NOT_EXIST));
-        return new ResponseDTO(Constant.RETRIEVE, user, String.valueOf(HttpStatus.OK.value()));
+        return new ResponseDTO(HttpStatus.OK.value(), Constant.RETRIEVE, user);
     }
 
     public ResponseDTO update(String id, User updatedUser) {
@@ -52,11 +50,10 @@ public class UserService {
         existingUser.setUserName(updatedUser.getUserName());
         existingUser.setEmail(updatedUser.getEmail());
         existingUser.setPassword(updatedUser.getPassword());
-        existingUser.setRole(updatedUser.getRole());
         existingUser.setUpdatedBy("SYSTEM");
 
         final User savedUser = this.userRepository.save(existingUser);
-        return new ResponseDTO(Constant.UPDATE, savedUser, String.valueOf(HttpStatus.OK.value()));
+        return new ResponseDTO(HttpStatus.OK.value(), Constant.UPDATE, savedUser);
     }
 
     public ResponseDTO delete(String id) {
@@ -64,13 +61,7 @@ public class UserService {
             throw new BadRequestServiceException(Constant.ID_DOES_NOT_EXIST);
         }
         this.userRepository.deleteById(id);
-        return new ResponseDTO(Constant.DELETE, null, String.valueOf(HttpStatus.OK.value()));
-    }
-
-    public String getRoleByEmail(String email) {
-        return userRepository.findByEmail(email)
-                .map(user -> user.getRole().getRole().name())
-                .orElseThrow(() -> new BadRequestServiceException("User not found for email: " + email));
+        return new ResponseDTO(HttpStatus.OK.value(), Constant.DELETE, null);
     }
 
     public ResponseDTO register(RegisterRequestDTO request) {
@@ -78,16 +69,13 @@ public class UserService {
             throw new BadRequestServiceException(Constant.EMAIL_ALREADY_EXIST + request.getEmail());
         }
 
-        Role role = roleService.getRoleByEnum(ERole.valueOf(request.getRole()));
-
-        User user = new User();
+        final User user = new User();
         user.setUserName(request.getUserName());
         user.setEmail(request.getEmail());
         user.setPassword(request.getPassword());
-        user.setRole(role);
         user.setCreatedBy("SYSTEM");
 
-        User savedUser = this.userRepository.save(user);
-        return new ResponseDTO(Constant.CREATE, savedUser, String.valueOf(HttpStatus.CREATED.value()));
+        final User savedUser = this.userRepository.save(user);
+        return new ResponseDTO(HttpStatus.CREATED.value(), Constant.CREATE, savedUser);
     }
 }

@@ -1,9 +1,15 @@
-package com.authservice.controller;
+package com.userService.controller;
 
-import com.authservice.dto.RegisterRequestDTO;
-import com.authservice.dto.ResponseDTO;
-import com.authservice.service.UserService;
+import com.common.entity.Role;
 import com.common.entity.User;
+import com.userService.dto.RegisterRequestDTO;
+import com.userService.dto.ResponseDTO;
+import com.userService.dto.UserWithRoleDTO;
+import com.userService.exception.BadRequestServiceException;
+import com.userService.repository.RoleRepository;
+import com.userService.repository.UserRepository;
+import com.userService.service.UserService;
+import com.userService.util.Constant;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -20,13 +26,17 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserController {
 
     private final UserService userService;
+    private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
 
-    public UserController(UserService userService) {
+    public UserController(UserService userService, UserRepository userRepository, RoleRepository roleRepository) {
         this.userService = userService;
+        this.userRepository = userRepository;
+        this.roleRepository = roleRepository;
     }
 
     @PostMapping("/create")
-    public ResponseDTO create(@RequestBody User user) {
+    public com.userService.dto.ResponseDTO create(@RequestBody User user) {
         return this.userService.create(user);
     }
 
@@ -54,5 +64,19 @@ public class UserController {
     public ResponseEntity<ResponseDTO> register(@RequestBody RegisterRequestDTO request) {
         ResponseDTO response = userService.register(request);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
+    }
+
+    @GetMapping("/email/{email}")
+    public ResponseDTO getUserByEmail(@PathVariable String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new BadRequestServiceException(Constant.EMAIL_NOT_FOUND + email));
+        Role role = roleRepository.findByUserId(user.getId());
+
+        UserWithRoleDTO dto = new UserWithRoleDTO();
+        dto.setId(user.getId());
+        dto.setEmail(user.getEmail());
+        dto.setRole(role.getRole());
+
+        return new ResponseDTO(HttpStatus.OK.value(), Constant.RETRIEVE, dto);
     }
 }
