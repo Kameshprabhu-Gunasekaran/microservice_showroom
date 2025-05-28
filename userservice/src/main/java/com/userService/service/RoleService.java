@@ -29,7 +29,7 @@ public class RoleService {
                 .orElseThrow(()->new BadRequestServiceException(Constant.NOT_FOUND));
         final Role role = new Role();
         role.setUser(user);
-        roleDTO.setRole(roleDTO.getRole());
+        role.setRole(roleDTO.getRole());
         role.setCreatedBy("SYSTEM");
         role.setUpdatedBy("SYSTEM");
         return new ResponseDTO(HttpStatus.OK.value(), Constant.CREATE, this.roleRepository.save(role));

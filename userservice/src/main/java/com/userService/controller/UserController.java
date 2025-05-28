@@ -36,7 +36,7 @@ public class UserController {
     }
 
     @PostMapping("/create")
-    public com.userService.dto.ResponseDTO create(@RequestBody User user) {
+    public ResponseDTO create(@RequestBody User user) {
         return this.userService.create(user);
     }
 
@@ -67,16 +67,15 @@ public class UserController {
     }
 
     @GetMapping("/email/{email}")
-    public ResponseDTO getUserByEmail(@PathVariable String email) {
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new BadRequestServiceException(Constant.EMAIL_NOT_FOUND + email));
+    public User getUserByEmail(@PathVariable String email) {
+            User user = userRepository.findByEmail(email).orElseThrow(() -> new BadRequestServiceException(Constant.EMAIL_NOT_FOUND + email));
         Role role = roleRepository.findByUserId(user.getId());
 
         UserWithRoleDTO dto = new UserWithRoleDTO();
         dto.setId(user.getId());
         dto.setEmail(user.getEmail());
         dto.setRole(role.getRole());
-
-        return new ResponseDTO(HttpStatus.OK.value(), Constant.RETRIEVE, dto);
+        return user;
+        //return new ResponseDTO(HttpStatus.OK.value(), Constant.RETRIEVE, user);
     }
 }

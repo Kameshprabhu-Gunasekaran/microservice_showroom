@@ -19,7 +19,7 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<ResponseDTO> login(@RequestBody UserSignInRequestDTO request) {
-        ResponseDTO response = jwtService.generateToken(request.getEmail());
+        ResponseDTO response = jwtService.generateToken(request.getEmail(), request.getPassword());
         return ResponseEntity.ok(response);
     }
 }

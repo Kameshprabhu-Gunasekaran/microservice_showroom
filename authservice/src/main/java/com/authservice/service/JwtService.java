@@ -10,6 +10,7 @@ import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -25,7 +26,10 @@ public class JwtService {
     @Autowired
     private WebClient webClient;
 
-    private static final String SECRET_KEY = "8482B4D62516555367566B59703373367639792F423F452468576D5A71347437";
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    private static final String SECRET_KEY = "83a29bc2-a865-4b70-a645-4c7f83dd6282";
     private static final long EXPIRATION_TIME = 3600000;
 
     @Autowired
@@ -33,20 +37,20 @@ public class JwtService {
         this.webClient = webClientBuilder.baseUrl("http://localhost:8082").build();
     }
 
-//    private Key getSignInKey() {
-//        return Keys.hmacShaKeyFor(SECRET_KEY.getBytes());
-//    }
-
-    public ResponseDTO generateToken(final String email) {
-        User user = getUserByEmail(email);
+    public ResponseDTO generateToken(final String email, final String password) {
+        final User user = getUserByEmail(email);
 
         if (user == null) {
             return new ResponseDTO("NOT FOUND", null, "User not found");
         }
 
+        if (!passwordEncoder.matches(password, user.getPassword())) {
+            return new ResponseDTO("BAD REQUEST", null, "INVALID PASSWORD");
+        }
+
         String role = fetchUserRole(user.getId());
 
-        Map<String, Object> claims = new HashMap<>();
+            Map<String, Object> claims = new HashMap<>();
         claims.put("role", role);
 
         String token = createToken(claims, email);
@@ -97,11 +101,14 @@ public class JwtService {
 
     private User getUserByEmail(String email) {
         try {
-            return webClient.get()
+
+            User existingUser =
+             webClient.get()
                     .uri(uriBuilder -> uriBuilder.path("/api/v1/users/email/{email}").build(email))
                     .retrieve()
                     .bodyToMono(User.class)
                     .block();
+            return existingUser;
         } catch (Exception e) {
             e.printStackTrace();
             return null;
