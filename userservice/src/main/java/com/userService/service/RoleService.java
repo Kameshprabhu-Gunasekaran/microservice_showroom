@@ -25,8 +25,7 @@ public class RoleService {
     }
 
     public ResponseDTO create(RoleDTO roleDTO) {
-        final User user=this.userRepository.findById(roleDTO.getUserId())
-                .orElseThrow(()->new BadRequestServiceException(Constant.NOT_FOUND));
+        final User user = this.userRepository.findById(roleDTO.getUserId()).orElseThrow(() -> new BadRequestServiceException(Constant.NOT_FOUND));
         final Role role = new Role();
         role.setUser(user);
         role.setRole(roleDTO.getRole());
@@ -41,14 +40,12 @@ public class RoleService {
     }
 
     public ResponseDTO retrieveById(String id) {
-        final Role role = this.roleRepository.findById(id)
-                .orElseThrow(() -> new BadRequestServiceException(Constant.ID_DOES_NOT_EXIST));
+        final Role role = this.roleRepository.findById(id).orElseThrow(() -> new BadRequestServiceException(Constant.ID_DOES_NOT_EXIST));
         return new ResponseDTO(HttpStatus.OK.value(), Constant.RETRIEVE, role);
     }
 
     public ResponseDTO update(String id, String updatedRole) {
-        final Role existingRole = this.roleRepository.findById(id)
-                .orElseThrow(() -> new BadRequestServiceException(Constant.ID_DOES_NOT_EXIST));
+        final Role existingRole = this.roleRepository.findById(id).orElseThrow(() -> new BadRequestServiceException(Constant.ID_DOES_NOT_EXIST));
 
         existingRole.setRole(updatedRole);
         existingRole.setUpdatedBy("SYSTEM");
@@ -62,6 +59,10 @@ public class RoleService {
         }
         this.roleRepository.deleteById(id);
         return new ResponseDTO(HttpStatus.OK.value(), Constant.DELETE, null);
+    }
+
+    public Role findUser(final String id) {
+        return this.roleRepository.findByUserId(id);
     }
 //
 //    public Role getRoleByEnum(ERole role) {

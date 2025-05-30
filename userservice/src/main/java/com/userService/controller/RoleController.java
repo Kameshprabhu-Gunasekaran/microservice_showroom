@@ -47,4 +47,9 @@ public class RoleController {
     public ResponseDTO delete(@PathVariable("id") String id) {
         return this.roleService.delete(id);
     }
+    @GetMapping("/user/{id}")
+    public Role user(@PathVariable final String id)
+    {
+        return this.roleService.findUser(id);
+    }
 }

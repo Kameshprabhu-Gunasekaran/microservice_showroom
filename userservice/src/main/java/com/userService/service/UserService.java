@@ -7,7 +7,9 @@ import com.userService.exception.BadRequestServiceException;
 import com.userService.repository.RoleRepository;
 import com.userService.repository.UserRepository;
 import com.userService.util.Constant;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,11 +17,14 @@ import java.util.List;
 @Service
 public class UserService {
 
+    private PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final RoleService roleService;
 
-    public UserService(UserRepository userRepository, RoleRepository roleRepository, RoleService roleService) {
+    public UserService(PasswordEncoder passwordEncoder, UserRepository userRepository,
+                       RoleRepository roleRepository, RoleService roleService) {
+        this.passwordEncoder = passwordEncoder;
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.roleService = roleService;
@@ -28,6 +33,7 @@ public class UserService {
     public ResponseDTO create(User user) {
 
         user.setCreatedBy("SYSTEM");
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         final User savedUser = this.userRepository.save(user);
         return new ResponseDTO(HttpStatus.CREATED.value(), Constant.CREATE, user);
     }
@@ -49,7 +55,7 @@ public class UserService {
 
         existingUser.setUserName(updatedUser.getUserName());
         existingUser.setEmail(updatedUser.getEmail());
-        existingUser.setPassword(updatedUser.getPassword());
+        existingUser.setPassword(passwordEncoder.encode(updatedUser.getPassword()));
         existingUser.setUpdatedBy("SYSTEM");
 
         final User savedUser = this.userRepository.save(existingUser);
@@ -72,7 +78,8 @@ public class UserService {
         final User user = new User();
         user.setUserName(request.getUserName());
         user.setEmail(request.getEmail());
-        user.setPassword(request.getPassword());
+        final String encrypt= passwordEncoder.encode(request.getPassword());
+        user.setPassword(encrypt);
         user.setCreatedBy("SYSTEM");
 
         final User savedUser = this.userRepository.save(user);

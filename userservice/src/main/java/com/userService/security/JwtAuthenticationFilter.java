@@ -20,7 +20,7 @@ import java.util.List;
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-    private final String SECRET_KEY = "83a29bc2-a865-4b70-a645-4c7f83dd6282";
+    private final String SECRET_KEY = "VGhpcyBpcyBhIHZlcnkgbG9uZyBzZWNyZXQga2V5IGZvciBzaWduaW5n";
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
