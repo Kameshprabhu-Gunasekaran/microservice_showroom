@@ -42,6 +42,8 @@ public class SecurityConfig {
                         .requestMatchers("/api/v1/roles/create").permitAll()
                         .requestMatchers("/api/v1/user/view/**")
                         .hasAnyAuthority("ROLE_ADMIN", "ROLE_USER", "ROLE_MANAGER")
+                        .requestMatchers("/api/v1/users/email/**")
+                        .hasAnyAuthority("ROLE_ADMIN", "ROLE_MANAGER")
 
                         .anyRequest().authenticated()
                 )

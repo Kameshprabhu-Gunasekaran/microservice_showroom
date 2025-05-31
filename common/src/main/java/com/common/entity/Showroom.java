@@ -14,16 +14,21 @@ import java.time.Instant;
 @Entity
 @Table(name = "showroom")
 public class Showroom {
+
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id")
     private String id;
+
     @Column(name = "name")
     private String name;
+
     @Column(name = "brand")
     private String brand;
+
     @Column(name = "address")
     private String address;
+
     @Column(name = "contact_number")
     private long contactNumber;
 

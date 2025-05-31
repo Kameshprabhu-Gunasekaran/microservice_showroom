@@ -27,7 +27,9 @@ public class SecurityConfig {
                 .exceptionHandling(ex -> ex.authenticationEntryPoint(authEntryPoint))
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/v1/bike/create", "/api/v1/bike/update/**", "/api/v1/bike/remove/**")
+                        .requestMatchers("/api/v1/bike/create").permitAll()
+                        .requestMatchers("/api/v1/showroom/create").permitAll()
+                        .requestMatchers("/api/v1/bike/update/**", "/api/v1/bike/remove/**")
                         .hasAnyAuthority("ROLE_ADMIN", "ROLE_SALESMANAGER")
                         .requestMatchers("/api/v1/bike/retrieve/**")
                         .hasAnyAuthority("ROLE_CUSTOMER", "ROLE_SALESMAN", "ROLE_ADMIN", "ROLE_SALESMANAGER")

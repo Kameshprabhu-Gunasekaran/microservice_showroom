@@ -4,6 +4,7 @@ import com.authservice.dto.ResponseDTO;
 import com.authservice.util.Constant;
 import com.common.entity.Role;
 import com.common.entity.User;
+import com.zaxxer.hikari.util.ClockSource;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
@@ -22,75 +23,63 @@ import java.util.Map;
 @Service
 public class JwtService {
 
+    private static final String SECRET_KEY = "5367566B59703373367639792F423F4528482B4D6251655468576D5A71347437";
+
     @Autowired
     private WebClient webClient;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    public static final String SECRET_KEY = "8c0bdcb872765826aeaa34f73b32686709b04486e22fc5d0f729d8b8913c3774";
+    public ResponseDTO generateToken(final String email, final String rawPassword) {
+        try {
+            User user = getUserByEmail(email);
 
-//    @Autowired
-//    public JwtService(WebClient.Builder webClientBuilder) {
-//        this.webClient = webClientBuilder.baseUrl("http://localhost:8082").build();
-//    }
-
-    public ResponseDTO generateToken(final String email, final String password) {
-        final User user = this.getUserByEmail(email);
-        //final String encrypt = passwordEncoder.encode(password);
-
-        final Role role = fetchUserRole(user.getId());
+            Role role = fetchUserRole(user.getId());
+            if (role == null) {
+                return new ResponseDTO("User role not found", null, HttpStatus.NOT_FOUND.getReasonPhrase());
+            }
 
             Map<String, Object> claims = new HashMap<>();
-        claims.put("role", role.getRole());
+            claims.put("role", role.getRole());
 
-        String token = this.createToken(claims, email);
+            String token = createToken(claims, user.getEmail());
 
-        return new ResponseDTO(Constant.CREATE, token, HttpStatus.OK.getReasonPhrase());
+            return new ResponseDTO(Constant.CREATE, token, HttpStatus.OK.getReasonPhrase());
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseDTO("Token generation failed", null, HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase());
+        }
     }
 
     private String createToken(Map<String, Object> claims, String email) {
         return Jwts.builder()
                 .setClaims(claims)
                 .setSubject(email)
-                .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + 1000*60*30))
-                .signWith(SignatureAlgorithm.HS256, getSignInKey())
-                .compact();
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis()+ 1000 * 60 * 30))
+                .signWith(SignatureAlgorithm.HS256,getSignInKey()).compact();
     }
 
     private Key getSignInKey() {
         byte[] keyBytes = Decoders.BASE64.decode(SECRET_KEY);
-        System.out.println("Key length in bytes: " + keyBytes.length);
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
-
     private User getUserByEmail(String email) {
-        try {
-
-           final  User existingUser = webClient.get()
-                    .uri("http://localhost:8082/api/v1/users/email/{email}",email)
-                    .retrieve()
-                    .bodyToMono(User.class)
-                    .block();
-            return existingUser;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
+        return webClient.get()
+                .uri("http://localhost:8082/api/v1/users/email/{email}", email)
+                .retrieve()
+                .bodyToMono(User.class)
+                .block();
     }
 
     private Role fetchUserRole(String userId) {
-        try {
-            return webClient.get()
-                    .uri(uriBuilder -> uriBuilder.path("/api/v1/roles/user/{id}").build(userId))
-                    .retrieve()
-                    .bodyToMono(Role.class)
-                    .block();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
+        return webClient.get()
+                .uri("http://localhost:8082/api/v1/roles/user/{id}", userId)
+                .retrieve()
+                .bodyToMono(Role.class)
+                .block();
     }
 }

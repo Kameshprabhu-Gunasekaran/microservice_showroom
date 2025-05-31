@@ -3,6 +3,7 @@ package com.bikeservice.controller;
 import com.bikeservice.dto.ResponseDTO;
 import com.bikeservice.dto.ShowroomDTO;
 import com.bikeservice.service.ShowroomService;
+import com.common.entity.Showroom;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,8 +24,8 @@ public class ShowroomController {
     }
 
     @PostMapping("/create")
-    public ResponseDTO create(@RequestBody ShowroomDTO dto) {
-        return this.showroomService.create(dto);
+    public ResponseDTO create(@RequestBody Showroom showroom) {
+        return this.showroomService.create(showroom);
     }
 
     @GetMapping("/retrieve")

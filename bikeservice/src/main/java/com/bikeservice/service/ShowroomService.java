@@ -21,10 +21,11 @@ public class ShowroomService {
         this.showroomRepository = showroomRepository;
     }
 
-    public ResponseDTO create(ShowroomDTO dto) {
-        final Showroom showroom = mapToEntity(dto);
+    public ResponseDTO create(Showroom showroom) {
+
+        showroom.setCreatedBy("SYSTEM");
         final Showroom saved = this.showroomRepository.save(showroom);
-        return new ResponseDTO(HttpStatus.CREATED.value(), Constant.CREATE, mapToDto(saved));
+        return new ResponseDTO(HttpStatus.CREATED.value(), Constant.CREATE, showroom);
     }
 
     public ResponseDTO retrieve() {
