@@ -20,10 +20,11 @@ public class CustomerService {
         this.customerRepository = customerRepository;
     }
 
-    public ResponseDTO create(CustomerDTO dto) {
-        final Customer customer = mapToEntity(dto);
+    public ResponseDTO create(Customer customer) {
+
+        customer.setCreatedBy("SYSTEM");
         final Customer saved = this.customerRepository.save(customer);
-        return new ResponseDTO(HttpStatus.CREATED.value(), Constant.CREATE, mapToDto(saved));
+        return new ResponseDTO(HttpStatus.CREATED.value(), Constant.CREATE, customer);
     }
 
     public ResponseDTO retrieveAll() {

@@ -22,11 +22,12 @@ public class FeedbackService {
         this.feedbackRepository = feedbackRepository;
     }
 
-    public ResponseDTO create(FeedbackDTO dto) {
-        final Feedback feedback = mapToEntity(dto);
+    public ResponseDTO create(Feedback feedback) {
+
+        feedback.setCreatedBy("SYSTEM");
         feedback.setSubmittedAt(LocalDateTime.now());
         final Feedback saved = this.feedbackRepository.save(feedback);
-        return new ResponseDTO(HttpStatus.CREATED.value(), Constant.CREATE, mapToDto(saved));
+        return new ResponseDTO(HttpStatus.CREATED.value(), Constant.CREATE, feedback);
     }
 
     public ResponseDTO retrieveAll() {

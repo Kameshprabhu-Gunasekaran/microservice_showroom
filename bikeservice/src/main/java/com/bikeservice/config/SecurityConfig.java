@@ -29,6 +29,12 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/v1/bike/create").permitAll()
                         .requestMatchers("/api/v1/showroom/create").permitAll()
+                        .requestMatchers("/api/v1/sale/create").permitAll()
+                        .requestMatchers("/api/v1/testride/create").permitAll()
+                        .requestMatchers("/api/v1/bike/**").permitAll()
+                        .requestMatchers("/api/v1/sale/**").permitAll()
+                        .requestMatchers("/api/v1/showroom/**").permitAll()
+                        .requestMatchers("/api/v1/testride/**").permitAll()
                         .requestMatchers("/api/v1/bike/update/**", "/api/v1/bike/remove/**")
                         .hasAnyAuthority("ROLE_ADMIN", "ROLE_SALESMANAGER")
                         .requestMatchers("/api/v1/bike/retrieve/**")

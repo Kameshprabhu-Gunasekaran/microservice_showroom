@@ -1,5 +1,6 @@
 package com.userService.controller;
 
+import com.common.entity.Customer;
 import com.userService.dto.CustomerDTO;
 import com.userService.dto.ResponseDTO;
 import com.userService.service.CustomerService;
@@ -16,8 +17,8 @@ public class CustomerController {
     }
 
     @PostMapping("/create")
-    public ResponseDTO create(@RequestBody CustomerDTO customerDTO) {
-        return this.customerService.create(customerDTO);
+    public ResponseDTO create(@RequestBody Customer customer) {
+        return this.customerService.create(customer);
     }
 
     @GetMapping("/retrieve-all")

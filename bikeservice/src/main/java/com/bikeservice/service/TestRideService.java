@@ -21,10 +21,11 @@ public class TestRideService {
         this.testRideRepository = testRideRepository;
     }
 
-    public ResponseDTO create(TestRideDTO dto) {
-        final TestRide testRide = mapToEntity(dto);
+    public ResponseDTO create(TestRide testRide) {
+
+        testRide.setCreatedBy("SYSTEM");
         final TestRide saved = this.testRideRepository.save(testRide);
-        return new ResponseDTO(HttpStatus.CREATED.value(), Constant.CREATE, mapToDto(saved));
+        return new ResponseDTO(HttpStatus.CREATED.value(), Constant.CREATE, testRide);
     }
 
     public ResponseDTO retrieve() {

@@ -21,10 +21,11 @@ public class SaleService {
         this.saleRepository = saleRepository;
     }
 
-    public ResponseDTO create(SaleDTO saleDto) {
-        final Sale sale = mapToEntity(saleDto);
+    public ResponseDTO create(Sale sale) {
+
+        sale.setCreatedBy("SYSTEM");
         final Sale savedSale = this.saleRepository.save(sale);
-        return new ResponseDTO(HttpStatus.CREATED.value(), Constant.CREATE, mapToDto(savedSale));
+        return new ResponseDTO(HttpStatus.CREATED.value(), Constant.CREATE, sale);
     }
 
     public ResponseDTO retrieve() {

@@ -3,6 +3,7 @@ package com.bikeservice.controller;
 import com.bikeservice.dto.BikeDTO;
 import com.bikeservice.dto.ResponseDTO;
 import com.bikeservice.service.BikeService;
+import com.common.entity.Bike;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,8 +24,8 @@ public class BikeController {
     }
 
     @PostMapping("/create")
-    public ResponseDTO create(@RequestBody BikeDTO dto) {
-        return this.bikeService.create(dto);
+    public ResponseDTO create(@RequestBody Bike bike) {
+        return this.bikeService.create(bike);
     }
 
     @GetMapping("/retrieve")

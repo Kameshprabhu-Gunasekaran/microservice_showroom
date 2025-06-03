@@ -21,10 +21,11 @@ public class BikeService {
         this.bikeRepository = bikeRepository;
     }
 
-    public ResponseDTO create(BikeDTO bikeDto) {
-        final Bike bike = mapToEntity(bikeDto);
+    public ResponseDTO create(Bike bike) {
+
+        bike.setCreatedBy("SYSTEM");
         final Bike savedBike = this.bikeRepository.save(bike);
-        return new ResponseDTO(HttpStatus.CREATED.value(), Constant.CREATE, mapToDto(savedBike));
+        return new ResponseDTO(HttpStatus.CREATED.value(), Constant.CREATE, bike);
     }
 
     public ResponseDTO retrieve() {

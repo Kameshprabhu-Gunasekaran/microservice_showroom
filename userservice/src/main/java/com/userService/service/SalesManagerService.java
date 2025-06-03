@@ -1,6 +1,7 @@
 package com.userService.service;
 
 import com.common.entity.SalesManager;
+import com.common.entity.User;
 import com.userService.dto.ResponseDTO;
 import com.userService.dto.SalesManagerDTO;
 import com.userService.exception.BadRequestServiceException;
@@ -21,9 +22,10 @@ public class SalesManagerService {
         this.salesManagerRepository = salesManagerRepository;
     }
 
-    public ResponseDTO create(SalesManagerDTO dto) {
-        final SalesManager manager = mapToEntity(dto);
-        final SalesManager saved = this.salesManagerRepository.save(manager);
+    public ResponseDTO create(SalesManager salesManager) {
+
+        salesManager.setCreatedBy("SYSTEM");
+        final SalesManager saved = this.salesManagerRepository.save(salesManager);
         return new ResponseDTO(HttpStatus.CREATED.value(), Constant.CREATE, mapToDto(saved));
     }
 

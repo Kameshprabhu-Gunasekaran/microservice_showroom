@@ -39,7 +39,7 @@ public class ShowroomService {
     public ResponseDTO retrieveById(String id) {
         final Showroom showroom = this.showroomRepository.findById(id)
                 .orElseThrow(() -> new BadRequestServiceException(Constant.ID_DOES_NOT_EXIST + id));
-        return new ResponseDTO(HttpStatus.OK.value(), Constant.RETRIEVE, mapToDto(showroom));
+        return new ResponseDTO(HttpStatus.OK.value(), Constant.RETRIEVE, showroom);
     }
 
     public ResponseDTO update(String id, ShowroomDTO updatedDto) {

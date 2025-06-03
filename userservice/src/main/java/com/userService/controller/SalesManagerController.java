@@ -1,5 +1,6 @@
 package com.userService.controller;
 
+import com.common.entity.SalesManager;
 import com.userService.dto.ResponseDTO;
 import com.userService.dto.SalesManagerDTO;
 import com.userService.service.SalesManagerService;
@@ -16,8 +17,8 @@ public class SalesManagerController {
     }
 
     @PostMapping("/create")
-    public ResponseDTO create(@RequestBody SalesManagerDTO salesManagerDTO) {
-        return this.salesManagerService.create(salesManagerDTO);
+    public ResponseDTO create(@RequestBody SalesManager salesManager) {
+        return this.salesManagerService.create(salesManager);
     }
 
     @GetMapping("/retrieve")
