@@ -76,6 +76,5 @@ public class UserController {
         dto.setEmail(user.getEmail());
         dto.setRole(role.getRole());
         return user;
-        //return new ResponseDTO(HttpStatus.OK.value(), Constant.RETRIEVE, user);
     }
 }

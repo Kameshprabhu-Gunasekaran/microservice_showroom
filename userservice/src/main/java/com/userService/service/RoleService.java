@@ -64,9 +64,4 @@ public class RoleService {
     public Role findUser(final String id) {
         return this.roleRepository.findByUserId(id);
     }
-//
-//    public Role getRoleByEnum(ERole role) {
-//        return roleRepository.findByRole(role)
-//                .orElseThrow(() -> new BadRequestServiceException("Role not found: " + role.name()));
-//    }
 }
