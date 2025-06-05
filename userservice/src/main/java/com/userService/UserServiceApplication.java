@@ -3,10 +3,10 @@ package com.userService;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
-import org.springframework.cloud.netflix.eureka.server.EnableEurekaServer;
+import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 
 @SpringBootApplication
-@EnableEurekaServer
+@EnableDiscoveryClient
 @EntityScan(basePackages = "com.common.entity")
 public class UserServiceApplication {
 

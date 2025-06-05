@@ -1,0 +1,79 @@
+server:
+  port: 8084
+
+spring:
+  application:
+    name: apigatewayservice
+
+  cloud:
+    gateway:
+      routes:
+        - id: authservice
+          uri: lb://COMMON
+          predicates:
+            - Path=/api/v1/auth/**
+
+        - id: userservice
+          uri: lb://COMMON
+          predicates:
+            - Path=/api/v1/user/**
+
+        - id: userservice-salesmanager
+          uri: lb://COMMON
+          predicates:
+              - Path=/api/v1/salesmanager/**
+
+        - id: userservice-salesman
+          uri: lb://COMMON
+          predicates:
+            - Path=/api/v1/salesman/**
+
+        - id: userservice-customer
+          uri: lb://COMMON
+          predicates:
+            - Path=/api/v1/customers/**
+
+        - id: userservice-feedback
+          uri: lb://COMMON
+          predicates:
+            - Path=/api/v1/feedbacks/**
+
+        - id: bikeservice
+          uri: lb://COMMON
+          predicates:
+            - Path=/api/v1/bike/**
+
+        - id: bikeservice-bike
+          uri: lb://COMMON
+          predicates:
+            - Path=/api/v1/bike/**
+
+        - id: bikeservice-sale
+          uri: lb://COMMON
+          predicates:
+            - Path=/api/v1/sale/**
+
+        - id: bikeservice-showroom
+          uri: lb://COMMON
+          predicates:
+            - Path=/api/v1/showroom/**
+
+        - id: bikeservice-testride
+          uri: lb://COMMON
+          predicates:
+            - Path=/api/v1/testride/**
+
+    discovery:
+      locator:
+        enabled: true
+        lowerCaseServiceId: true
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+    register-with-eureka: true
+    fetch-registry: true
+
+  instance:
+    prefer-ip-address: true
