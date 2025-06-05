@@ -18,7 +18,7 @@ public class AuthController {
     public JwtService jwtService;
 
     @PostMapping("/login")
-    public ResponseEntity<ResponseDTO> login(@RequestBody UserSignInRequestDTO request) {
+    public ResponseEntity<ResponseDTO> login(@RequestBody final UserSignInRequestDTO request) {
         ResponseDTO response = jwtService.generateToken(request.getEmail(), request.getPassword());
         return ResponseEntity.ok(response);
     }

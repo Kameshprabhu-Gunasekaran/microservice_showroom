@@ -7,6 +7,7 @@ import com.bikeservice.repository.TestRideRepository;
 import com.bikeservice.util.Constant;
 import com.common.entity.TestRide;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,13 +18,15 @@ public class TestRideService {
 
     private final TestRideRepository testRideRepository;
 
-    public TestRideService(TestRideRepository testRideRepository) {
+    public TestRideService(final TestRideRepository testRideRepository) {
         this.testRideRepository = testRideRepository;
     }
 
-    public ResponseDTO create(TestRide testRide) {
+    public ResponseDTO create(final TestRide testRide) {
 
-        testRide.setCreatedBy("SYSTEM");
+         Object email = SecurityContextHolder.getContext().getAuthentication();
+         System.out.println(email);
+//        testRide.setCreatedBy(email);
         final TestRide saved = this.testRideRepository.save(testRide);
         return new ResponseDTO(HttpStatus.CREATED.value(), Constant.CREATE, testRide);
     }
@@ -36,13 +39,13 @@ public class TestRideService {
         return new ResponseDTO(HttpStatus.OK.value(), Constant.RETRIEVE, rides);
     }
 
-    public ResponseDTO retrieveById(String id) {
+    public ResponseDTO retrieveById(final String id) {
         final TestRide ride = this.testRideRepository.findById(id)
                 .orElseThrow(() -> new BadRequestServiceException(Constant.ID_DOES_NOT_EXIST + id));
         return new ResponseDTO(HttpStatus.OK.value(), Constant.RETRIEVE, mapToDto(ride));
     }
 
-    public ResponseDTO update(String id, TestRideDTO dto) {
+    public ResponseDTO update(final String id, final TestRideDTO dto) {
         final TestRide existing = this.testRideRepository.findById(id)
                 .orElseThrow(() -> new BadRequestServiceException(Constant.ID_DOES_NOT_EXIST + id));
 
@@ -57,7 +60,7 @@ public class TestRideService {
         return new ResponseDTO(HttpStatus.OK.value(), Constant.UPDATE, mapToDto(updated));
     }
 
-    public ResponseDTO delete(String id) {
+    public ResponseDTO delete(final String id) {
         if (!testRideRepository.existsById(id)) {
             throw new BadRequestServiceException(Constant.ID_DOES_NOT_EXIST + id);
         }
@@ -65,7 +68,7 @@ public class TestRideService {
         return new ResponseDTO(HttpStatus.OK.value(), Constant.DELETE, null);
     }
 
-    private TestRideDTO mapToDto(TestRide tr) {
+    private TestRideDTO mapToDto(final TestRide tr) {
         final TestRideDTO dto = new TestRideDTO();
         dto.setId(tr.getId());
         dto.setCustomerId(tr.getCustomerId());
@@ -75,17 +78,5 @@ public class TestRideService {
         dto.setStatus(tr.getStatus());
         dto.setFeedback(tr.getFeedback());
         return dto;
-    }
-
-    private TestRide mapToEntity(TestRideDTO dto) {
-        final TestRide testRide = new TestRide();
-        testRide.setId(dto.getId());
-        testRide.setCustomerId(dto.getCustomerId());
-        testRide.setBikeId(dto.getBikeId());
-        testRide.setShowroomId(dto.getShowroomId());
-        testRide.setScheduledTime(dto.getScheduledTime());
-        testRide.setStatus(dto.getStatus());
-        testRide.setFeedback(dto.getFeedback());
-        return testRide;
     }
 }

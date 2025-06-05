@@ -9,7 +9,7 @@ public class ResponseDTO {
     public ResponseDTO() {
     }
 
-    public ResponseDTO(String message, Object data, String status) {
+    public ResponseDTO(final String message,final Object data, final String status) {
         this.message = message;
         this.data = data;
         this.status = status;

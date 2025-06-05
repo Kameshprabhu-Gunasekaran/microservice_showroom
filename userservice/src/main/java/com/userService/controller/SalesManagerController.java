@@ -12,12 +12,12 @@ public class SalesManagerController {
 
     private final SalesManagerService salesManagerService;
 
-    public SalesManagerController(SalesManagerService salesManagerService) {
+    public SalesManagerController(final SalesManagerService salesManagerService) {
         this.salesManagerService = salesManagerService;
     }
 
     @PostMapping("/create")
-    public ResponseDTO create(@RequestBody SalesManager salesManager) {
+    public ResponseDTO create(@RequestBody final SalesManager salesManager) {
         return this.salesManagerService.create(salesManager);
     }
 
@@ -27,17 +27,17 @@ public class SalesManagerController {
     }
 
     @GetMapping("/retrieve/{id}")
-    public ResponseDTO retrieveById(@PathVariable("id") String id) {
+    public ResponseDTO retrieveById(@PathVariable("id") final String id) {
         return this.salesManagerService.retrieveById(id);
     }
 
     @PutMapping("/update/{id}")
-    public ResponseDTO update(@PathVariable("id") String id, @RequestBody SalesManagerDTO salesManagerDTO) {
+    public ResponseDTO update(@PathVariable("id") final String id, @RequestBody final SalesManagerDTO salesManagerDTO) {
         return this.salesManagerService.update(id, salesManagerDTO);
     }
 
     @DeleteMapping("/remove/{id}")
-    public ResponseDTO delete(@PathVariable("id") String id) {
+    public ResponseDTO delete(@PathVariable("id") final String id) {
         return this.salesManagerService.delete(id);
     }
 }

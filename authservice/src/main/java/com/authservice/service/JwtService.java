@@ -4,12 +4,12 @@ import com.authservice.dto.ResponseDTO;
 import com.authservice.util.Constant;
 import com.common.entity.Role;
 import com.common.entity.User;
-import com.zaxxer.hikari.util.ClockSource;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -23,7 +23,8 @@ import java.util.Map;
 @Service
 public class JwtService {
 
-    private static final String SECRET_KEY = "5367566B59703373367639792F423F4528482B4D6251655468576D5A71347437";
+    @Value("${jwt.secret-key}")
+    private String secretKey;
 
     @Autowired
     private WebClient webClient;
@@ -33,17 +34,17 @@ public class JwtService {
 
     public ResponseDTO generateToken(final String email, final String rawPassword) {
         try {
-            User user = getUserByEmail(email);
+            final User user = getUserByEmail(email);
 
-            Role role = fetchUserRole(user.getId());
+            final Role role = fetchUserRole(user.getId());
             if (role == null) {
                 return new ResponseDTO("User role not found", null, HttpStatus.NOT_FOUND.getReasonPhrase());
             }
 
-            Map<String, Object> claims = new HashMap<>();
+            final Map<String, Object> claims = new HashMap<>();
             claims.put("role", role.getRole());
 
-            String token = createToken(claims, user.getEmail());
+            final String token = createToken(claims, user.getEmail());
 
             return new ResponseDTO(Constant.CREATE, token, HttpStatus.OK.getReasonPhrase());
 
@@ -53,7 +54,7 @@ public class JwtService {
         }
     }
 
-    private String createToken(Map<String, Object> claims, String email) {
+    private String createToken(final Map<String, Object> claims, final String email) {
         return Jwts.builder()
                 .setClaims(claims)
                 .setSubject(email)
@@ -63,11 +64,11 @@ public class JwtService {
     }
 
     private Key getSignInKey() {
-        byte[] keyBytes = Decoders.BASE64.decode(SECRET_KEY);
+        byte[] keyBytes = Decoders.BASE64.decode(secretKey);
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
-    private User getUserByEmail(String email) {
+    private User getUserByEmail(final String email) {
         return webClient.get()
                 .uri("http://localhost:8082/api/v1/users/email/{email}", email)
                 .retrieve()
@@ -75,7 +76,7 @@ public class JwtService {
                 .block();
     }
 
-    private Role fetchUserRole(String userId) {
+    private Role fetchUserRole(final String userId) {
         return webClient.get()
                 .uri("http://localhost:8082/api/v1/roles/user/{id}", userId)
                 .retrieve()

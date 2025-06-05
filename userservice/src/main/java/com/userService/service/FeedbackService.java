@@ -7,6 +7,7 @@ import com.userService.exception.BadRequestServiceException;
 import com.userService.repository.FeedbackRepository;
 import com.userService.util.Constant;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -18,13 +19,14 @@ public class FeedbackService {
 
     private final FeedbackRepository feedbackRepository;
 
-    public FeedbackService(FeedbackRepository feedbackRepository) {
+    public FeedbackService(final FeedbackRepository feedbackRepository) {
         this.feedbackRepository = feedbackRepository;
     }
 
-    public ResponseDTO create(Feedback feedback) {
+    public ResponseDTO create(final Feedback feedback) {
 
-        feedback.setCreatedBy("SYSTEM");
+        final String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        feedback.setCreatedBy(email);
         feedback.setSubmittedAt(LocalDateTime.now());
         final Feedback saved = this.feedbackRepository.save(feedback);
         return new ResponseDTO(HttpStatus.CREATED.value(), Constant.CREATE, feedback);
@@ -38,13 +40,13 @@ public class FeedbackService {
         return new ResponseDTO(HttpStatus.OK.value(), Constant.RETRIEVE, feedbackList);
     }
 
-    public ResponseDTO retrieveById(String id) {
+    public ResponseDTO retrieveById(final String id) {
         final Feedback feedback = this.feedbackRepository.findById(id)
                 .orElseThrow(() -> new BadRequestServiceException(Constant.ID_DOES_NOT_EXIST + id));
         return new ResponseDTO(HttpStatus.OK.value(), Constant.RETRIEVE, mapToDto(feedback));
     }
 
-    public ResponseDTO delete(String id) {
+    public ResponseDTO delete(final String id) {
         if (!feedbackRepository.existsById(id)) {
             throw new BadRequestServiceException(Constant.ID_DOES_NOT_EXIST + id);
         }
@@ -52,17 +54,7 @@ public class FeedbackService {
         return new ResponseDTO(HttpStatus.OK.value(), Constant.DELETE, null);
     }
 
-    private Feedback mapToEntity(FeedbackDTO dto) {
-        final Feedback feedback = new Feedback();
-        feedback.setId(dto.getId());
-        feedback.setCustomerId(dto.getCustomerId());
-        feedback.setMessage(dto.getMessage());
-        feedback.setRating(dto.getRating());
-        feedback.setSubmittedAt(dto.getSubmittedAt());
-        return feedback;
-    }
-
-    private FeedbackDTO mapToDto(Feedback feedback) {
+    private FeedbackDTO mapToDto(final Feedback feedback) {
         final FeedbackDTO dto = new FeedbackDTO();
         dto.setId(feedback.getId());
         dto.setCustomerId(feedback.getCustomerId());

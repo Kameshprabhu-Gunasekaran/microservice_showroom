@@ -8,6 +8,7 @@ import com.userService.exception.BadRequestServiceException;
 import com.userService.repository.SalesManagerRepository;
 import com.userService.util.Constant;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,13 +19,14 @@ public class SalesManagerService {
 
     private final SalesManagerRepository salesManagerRepository;
 
-    public SalesManagerService(SalesManagerRepository salesManagerRepository) {
+    public SalesManagerService(final SalesManagerRepository salesManagerRepository) {
         this.salesManagerRepository = salesManagerRepository;
     }
 
-    public ResponseDTO create(SalesManager salesManager) {
+    public ResponseDTO create(final SalesManager salesManager) {
 
-        salesManager.setCreatedBy("SYSTEM");
+        final String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        salesManager.setCreatedBy(email);
         final SalesManager saved = this.salesManagerRepository.save(salesManager);
         return new ResponseDTO(HttpStatus.CREATED.value(), Constant.CREATE, mapToDto(saved));
     }
@@ -37,13 +39,13 @@ public class SalesManagerService {
         return new ResponseDTO(HttpStatus.OK.value(), Constant.RETRIEVE, managers);
     }
 
-    public ResponseDTO retrieveById(String id) {
+    public ResponseDTO retrieveById(final String id) {
         final SalesManager manager = this.salesManagerRepository.findById(id)
                 .orElseThrow(() -> new BadRequestServiceException(Constant.ID_DOES_NOT_EXIST + id));
         return new ResponseDTO(HttpStatus.OK.value(), Constant.RETRIEVE, mapToDto(manager));
     }
 
-    public ResponseDTO update(String id, SalesManagerDTO dto) {
+    public ResponseDTO update(final String id, final SalesManagerDTO dto) {
         final SalesManager existing = this.salesManagerRepository.findById(id)
                 .orElseThrow(() -> new BadRequestServiceException(Constant.ID_DOES_NOT_EXIST + id));
 
@@ -56,7 +58,7 @@ public class SalesManagerService {
         return new ResponseDTO(HttpStatus.OK.value(), Constant.UPDATE, mapToDto(updated));
     }
 
-    public ResponseDTO delete(String id) {
+    public ResponseDTO delete(final String id) {
         if (!salesManagerRepository.existsById(id)) {
             throw new BadRequestServiceException(Constant.ID_DOES_NOT_EXIST + id);
         }
@@ -64,17 +66,7 @@ public class SalesManagerService {
         return new ResponseDTO(HttpStatus.OK.value(), Constant.DELETE, null);
     }
 
-    private SalesManager mapToEntity(SalesManagerDTO dto) {
-        final SalesManager manager = new SalesManager();
-        manager.setId(dto.getId());
-        manager.setName(dto.getName());
-        manager.setAddress(dto.getAddress());
-        manager.setContactNumber(dto.getContactNumber());
-        manager.setShowroomId(dto.getShowroomId());
-        return manager;
-    }
-
-    private SalesManagerDTO mapToDto(SalesManager manager) {
+    private SalesManagerDTO mapToDto(final SalesManager manager) {
         final SalesManagerDTO dto = new SalesManagerDTO();
         dto.setId(manager.getId());
         dto.setName(manager.getName());

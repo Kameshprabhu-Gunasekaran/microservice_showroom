@@ -7,6 +7,7 @@ import com.bikeservice.repository.SaleRepository;
 import com.bikeservice.util.Constant;
 import com.common.entity.Sale;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,13 +18,14 @@ public class SaleService {
 
     private final SaleRepository saleRepository;
 
-    public SaleService(SaleRepository saleRepository) {
+    public SaleService(final SaleRepository saleRepository) {
         this.saleRepository = saleRepository;
     }
 
-    public ResponseDTO create(Sale sale) {
+    public ResponseDTO create(final Sale sale) {
 
-        sale.setCreatedBy("SYSTEM");
+        final String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        sale.setCreatedBy(email);
         final Sale savedSale = this.saleRepository.save(sale);
         return new ResponseDTO(HttpStatus.CREATED.value(), Constant.CREATE, sale);
     }
@@ -36,13 +38,13 @@ public class SaleService {
         return new ResponseDTO(HttpStatus.OK.value(), Constant.RETRIEVE, sales);
     }
 
-    public ResponseDTO retrieveById(String id) {
+    public ResponseDTO retrieveById(final String id) {
         final Sale sale = this.saleRepository.findById(id)
                 .orElseThrow(() -> new BadRequestServiceException(Constant.ID_DOES_NOT_EXIST + id));
         return new ResponseDTO(HttpStatus.OK.value(), Constant.RETRIEVE, mapToDto(sale));
     }
 
-    public ResponseDTO update(String id, SaleDTO updatedDto) {
+    public ResponseDTO update(final String id, final SaleDTO updatedDto) {
         final Sale existingSale = this.saleRepository.findById(id)
                 .orElseThrow(() -> new BadRequestServiceException(Constant.ID_DOES_NOT_EXIST + id));
 
@@ -55,7 +57,7 @@ public class SaleService {
         return new ResponseDTO(HttpStatus.OK.value(), Constant.UPDATE, mapToDto(updatedSale));
     }
 
-    public ResponseDTO delete(String id) {
+    public ResponseDTO delete(final String id) {
         if (!saleRepository.existsById(id)) {
             throw new BadRequestServiceException(Constant.ID_DOES_NOT_EXIST + id);
         }
@@ -63,7 +65,7 @@ public class SaleService {
         return new ResponseDTO(HttpStatus.OK.value(), Constant.DELETE, null);
     }
 
-    private SaleDTO mapToDto(Sale sale) {
+    private SaleDTO mapToDto(final Sale sale) {
         final SaleDTO dto = new SaleDTO();
         dto.setId(sale.getId());
         dto.setSalesDate(sale.getSalesDate());
@@ -71,14 +73,5 @@ public class SaleService {
         dto.setBikeId(sale.getBikeId());
         dto.setCustomerId(sale.getCustomerId());
         return dto;
-    }
-
-    private Sale mapToEntity(SaleDTO dto) {
-        final Sale sale = new Sale();
-        sale.setSalesDate(dto.getSalesDate());
-        sale.setSalesPrice(dto.getSalesPrice());
-        sale.setBikeId(dto.getBikeId());
-        sale.setCustomerId(dto.getCustomerId());
-        return sale;
     }
 }

@@ -7,6 +7,7 @@ import com.bikeservice.repository.BikeRepository;
 import com.bikeservice.util.Constant;
 import com.common.entity.Bike;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,13 +18,15 @@ public class BikeService {
 
     private final BikeRepository bikeRepository;
 
-    public BikeService(BikeRepository bikeRepository) {
+    public BikeService(final BikeRepository bikeRepository) {
         this.bikeRepository = bikeRepository;
     }
 
-    public ResponseDTO create(Bike bike) {
+    public ResponseDTO create(final Bike bike) {
 
-        bike.setCreatedBy("SYSTEM");
+        final Object email = SecurityContextHolder.getContext().getAuthentication();
+        System.out.println(email);
+//        bike.setCreatedBy(email);
         final Bike savedBike = this.bikeRepository.save(bike);
         return new ResponseDTO(HttpStatus.CREATED.value(), Constant.CREATE, bike);
     }
@@ -36,13 +39,13 @@ public class BikeService {
         return new ResponseDTO(HttpStatus.OK.value(), Constant.RETRIEVE, bikes);
     }
 
-    public ResponseDTO retrieveById(String id) {
+    public ResponseDTO retrieveById(final String id) {
         final Bike bike = this.bikeRepository.findById(id)
                 .orElseThrow(() -> new BadRequestServiceException(Constant.ID_DOES_NOT_EXIST + id));
         return new ResponseDTO(HttpStatus.OK.value(), Constant.RETRIEVE, mapToDto(bike));
     }
 
-    public ResponseDTO update(String id, BikeDTO updatedDto) {
+    public ResponseDTO update(final String id, final BikeDTO updatedDto) {
         final Bike existingBike = this.bikeRepository.findById(id)
                 .orElseThrow(() -> new BadRequestServiceException(Constant.ID_DOES_NOT_EXIST + id));
 
@@ -57,7 +60,7 @@ public class BikeService {
         return new ResponseDTO(HttpStatus.OK.value(), Constant.UPDATE, mapToDto(updatedBike));
     }
 
-    public ResponseDTO delete(String id) {
+    public ResponseDTO delete(final String id) {
         if (!bikeRepository.existsById(id)) {
             throw new BadRequestServiceException(Constant.ID_DOES_NOT_EXIST + id);
         }
@@ -65,7 +68,7 @@ public class BikeService {
         return new ResponseDTO(HttpStatus.OK.value(), Constant.DELETE, null);
     }
 
-    private BikeDTO mapToDto(Bike bike) {
+    private BikeDTO mapToDto(final Bike bike) {
         final BikeDTO dto = new BikeDTO();
         dto.setId(bike.getId());
         dto.setName(bike.getName());
@@ -75,16 +78,5 @@ public class BikeService {
         dto.setStock(bike.getStock());
         dto.setSalesmanId(bike.getSalesmanId());
         return dto;
-    }
-
-    private Bike mapToEntity(BikeDTO dto) {
-        final Bike bike = new Bike();
-        bike.setName(dto.getName());
-        bike.setCc(dto.getCc());
-        bike.setMileage(dto.getMileage());
-        bike.setPrice(dto.getPrice());
-        bike.setStock(dto.getStock());
-        bike.setSalesmanId(dto.getSalesmanId());
-        return bike;
     }
 }

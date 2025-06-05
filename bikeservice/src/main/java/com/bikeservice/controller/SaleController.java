@@ -1,9 +1,7 @@
 package com.bikeservice.controller;
 
-import com.bikeservice.dto.BikeDTO;
 import com.bikeservice.dto.ResponseDTO;
 import com.bikeservice.dto.SaleDTO;
-import com.bikeservice.service.BikeService;
 import com.bikeservice.service.SaleService;
 import com.common.entity.Sale;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -21,12 +19,12 @@ public class SaleController {
 
     private final SaleService saleService;
 
-    public SaleController(SaleService saleService) {
+    public SaleController(final SaleService saleService) {
         this.saleService = saleService;
     }
 
     @PostMapping("/create")
-    public ResponseDTO create(@RequestBody Sale sale) {
+    public ResponseDTO create(@RequestBody final Sale sale) {
         return this.saleService.create(sale);
     }
 
@@ -36,17 +34,17 @@ public class SaleController {
     }
 
     @GetMapping("/retrieve/{id}")
-    public ResponseDTO retrieveById(@PathVariable("id") String id) {
+    public ResponseDTO retrieveById(@PathVariable("id") final String id) {
         return this.saleService.retrieveById(id);
     }
 
     @PutMapping("/update/{id}")
-    public ResponseDTO update(@PathVariable("id") String id, @RequestBody SaleDTO dto) {
+    public ResponseDTO update(@PathVariable("id") final String id, @RequestBody final SaleDTO dto) {
         return this.saleService.update(id, dto);
     }
 
     @DeleteMapping("/remove/{id}")
-    public ResponseDTO delete(@PathVariable("id") String id) {
+    public ResponseDTO delete(@PathVariable("id") final String id) {
         return this.saleService.delete(id);
     }
 }

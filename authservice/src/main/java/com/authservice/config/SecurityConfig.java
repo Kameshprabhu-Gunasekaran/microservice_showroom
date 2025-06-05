@@ -16,12 +16,12 @@ public class SecurityConfig {
 
     private final AuthEntryPoint authEntryPoint;
 
-    public SecurityConfig(AuthEntryPoint authEntryPoint) {
+    public SecurityConfig(final AuthEntryPoint authEntryPoint) {
         this.authEntryPoint = authEntryPoint;
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(final HttpSecurity http) throws Exception {
         http.csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/v1/auth/**").permitAll()
@@ -34,7 +34,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
+    public AuthenticationManager authenticationManager(final AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
     }
 

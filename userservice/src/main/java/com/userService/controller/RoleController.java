@@ -19,12 +19,12 @@ public class RoleController {
 
     private final RoleService roleService;
 
-    public RoleController(RoleService roleService) {
+    public RoleController(final RoleService roleService) {
         this.roleService = roleService;
     }
 
     @PostMapping("/create")
-    public ResponseDTO create(@RequestBody RoleDTO roleDTO) {
+    public ResponseDTO create(@RequestBody final RoleDTO roleDTO) {
         return this.roleService.create(roleDTO);
     }
 
@@ -34,17 +34,17 @@ public class RoleController {
     }
 
     @GetMapping("/retrieve/{id}")
-    public ResponseDTO retrieveById(@PathVariable("id") String id) {
+    public ResponseDTO retrieveById(@PathVariable("id") final String id) {
         return this.roleService.retrieveById(id);
     }
 
     @PutMapping("/update/{id}")
-    public ResponseDTO update(@PathVariable("id") String id, @RequestBody String updatedRole) {
+    public ResponseDTO update(@PathVariable("id") final String id, @RequestBody final String updatedRole) {
         return this.roleService.update(id, updatedRole);
     }
 
     @DeleteMapping("/remove/{id}")
-    public ResponseDTO delete(@PathVariable("id") String id) {
+    public ResponseDTO delete(@PathVariable("id") final String id) {
         return this.roleService.delete(id);
     }
     @GetMapping("/user/{id}")

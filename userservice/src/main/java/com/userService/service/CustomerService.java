@@ -7,6 +7,7 @@ import com.userService.exception.BadRequestServiceException;
 import com.userService.repository.CustomerRepository;
 import com.userService.util.Constant;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,13 +17,14 @@ import java.util.stream.Collectors;
 public class CustomerService {
     private final CustomerRepository customerRepository;
 
-    public CustomerService(CustomerRepository customerRepository) {
+    public CustomerService(final CustomerRepository customerRepository) {
         this.customerRepository = customerRepository;
     }
 
     public ResponseDTO create(Customer customer) {
 
-        customer.setCreatedBy("SYSTEM");
+        final String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        customer.setCreatedBy(email);
         final Customer saved = this.customerRepository.save(customer);
         return new ResponseDTO(HttpStatus.CREATED.value(), Constant.CREATE, customer);
     }
@@ -72,16 +74,5 @@ public class CustomerService {
         dto.setContactNumber(customer.getContactNumber());
         dto.setSalesmanId(customer.getSalesmanId());
         return dto;
-    }
-
-    private Customer mapToEntity(CustomerDTO dto) {
-        final Customer customer = new Customer();
-        customer.setId(dto.getId());
-        customer.setName(dto.getName());
-        customer.setEmail(dto.getEmail());
-        customer.setAddress(dto.getAddress());
-        customer.setContactNumber(dto.getContactNumber());
-        customer.setSalesmanId(dto.getSalesmanId());
-        return customer;
     }
 }

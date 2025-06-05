@@ -7,6 +7,7 @@ import com.bikeservice.repository.ShowroomRepository;
 import com.bikeservice.util.Constant;
 import com.common.entity.Showroom;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,14 +18,14 @@ public class ShowroomService {
 
     private final ShowroomRepository showroomRepository;
 
-    public ShowroomService(ShowroomRepository showroomRepository) {
+    public ShowroomService(final ShowroomRepository showroomRepository) {
         this.showroomRepository = showroomRepository;
     }
 
-    public ResponseDTO create(Showroom showroom) {
+    public ResponseDTO create(final Showroom showroom) {
 
-        showroom.setCreatedBy("SYSTEM");
-        final Showroom saved = this.showroomRepository.save(showroom);
+        final String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        showroom.setCreatedBy(email);        final Showroom saved = this.showroomRepository.save(showroom);
         return new ResponseDTO(HttpStatus.CREATED.value(), Constant.CREATE, showroom);
     }
 
@@ -36,13 +37,13 @@ public class ShowroomService {
         return new ResponseDTO(HttpStatus.OK.value(), Constant.RETRIEVE, showrooms);
     }
 
-    public ResponseDTO retrieveById(String id) {
+    public ResponseDTO retrieveById(final String id) {
         final Showroom showroom = this.showroomRepository.findById(id)
                 .orElseThrow(() -> new BadRequestServiceException(Constant.ID_DOES_NOT_EXIST + id));
         return new ResponseDTO(HttpStatus.OK.value(), Constant.RETRIEVE, showroom);
     }
 
-    public ResponseDTO update(String id, ShowroomDTO updatedDto) {
+    public ResponseDTO update(final String id, final ShowroomDTO updatedDto) {
         final Showroom existing = this.showroomRepository.findById(id)
                 .orElseThrow(() -> new BadRequestServiceException(Constant.ID_DOES_NOT_EXIST + id));
 
@@ -55,7 +56,7 @@ public class ShowroomService {
         return new ResponseDTO(HttpStatus.OK.value(), Constant.UPDATE, mapToDto(updated));
     }
 
-    public ResponseDTO delete(String id) {
+    public ResponseDTO delete(final String id) {
         if (!showroomRepository.existsById(id)) {
             throw new BadRequestServiceException(Constant.ID_DOES_NOT_EXIST + id);
         }
@@ -63,7 +64,7 @@ public class ShowroomService {
         return new ResponseDTO(HttpStatus.OK.value(), Constant.DELETE, null);
     }
 
-    private ShowroomDTO mapToDto(Showroom showroom) {
+    private ShowroomDTO mapToDto(final Showroom showroom) {
         final ShowroomDTO dto = new ShowroomDTO();
         dto.setId(showroom.getId());
         dto.setName(showroom.getName());
@@ -71,15 +72,5 @@ public class ShowroomService {
         dto.setAddress(showroom.getAddress());
         dto.setContactNumber(showroom.getContactNumber());
         return dto;
-    }
-
-    private Showroom mapToEntity(ShowroomDTO dto) {
-        final Showroom showroom = new Showroom();
-        showroom.setId(dto.getId());
-        showroom.setName(dto.getName());
-        showroom.setBrand(dto.getBrand());
-        showroom.setAddress(dto.getAddress());
-        showroom.setContactNumber(dto.getContactNumber());
-        return showroom;
     }
 }

@@ -19,12 +19,12 @@ public class BikeController {
 
     private final BikeService bikeService;
 
-    public BikeController(BikeService bikeService) {
+    public BikeController(final BikeService bikeService) {
         this.bikeService = bikeService;
     }
 
     @PostMapping("/create")
-    public ResponseDTO create(@RequestBody Bike bike) {
+    public ResponseDTO create(@RequestBody final Bike bike) {
         return this.bikeService.create(bike);
     }
 
@@ -34,17 +34,17 @@ public class BikeController {
     }
 
     @GetMapping("/retrieve/{id}")
-    public ResponseDTO retrieveById(@PathVariable("id") String id) {
+    public ResponseDTO retrieveById(@PathVariable("id") final String id) {
         return this.bikeService.retrieveById(id);
     }
 
     @PutMapping("/update/{id}")
-    public ResponseDTO update(@PathVariable("id") String id, @RequestBody BikeDTO dto) {
+    public ResponseDTO update(@PathVariable("id") final String id, @RequestBody final BikeDTO dto) {
         return this.bikeService.update(id, dto);
     }
 
     @DeleteMapping("/remove/{id}")
-    public ResponseDTO delete(@PathVariable("id") String id) {
+    public ResponseDTO delete(@PathVariable("id") final String id) {
         return this.bikeService.delete(id);
     }
 }

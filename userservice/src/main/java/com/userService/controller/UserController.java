@@ -29,14 +29,14 @@ public class UserController {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
 
-    public UserController(UserService userService, UserRepository userRepository, RoleRepository roleRepository) {
+    public UserController(final UserService userService, final UserRepository userRepository, final RoleRepository roleRepository) {
         this.userService = userService;
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
     }
 
     @PostMapping("/create")
-    public ResponseDTO create(@RequestBody User user) {
+    public ResponseDTO create(@RequestBody final User user) {
         return this.userService.create(user);
     }
 
@@ -46,35 +46,28 @@ public class UserController {
     }
 
     @GetMapping("/retrieve/{id}")
-    public ResponseDTO retrieveById(@PathVariable("id") String id) {
+    public ResponseDTO retrieveById(@PathVariable("id") final String id) {
         return this.userService.retrieveById(id);
     }
 
     @PutMapping("/update/{id}")
-    public ResponseDTO update(@PathVariable("id") String id, @RequestBody User updatedUser) {
+    public ResponseDTO update(@PathVariable("id") final String id, @RequestBody final User updatedUser) {
         return this.userService.update(id, updatedUser);
     }
 
     @DeleteMapping("/remove/{id}")
-    public ResponseDTO delete(@PathVariable("id") String id) {
+    public ResponseDTO delete(@PathVariable("id") final String id) {
         return this.userService.delete(id);
     }
 
     @PostMapping("/register")
-    public ResponseEntity<ResponseDTO> register(@RequestBody RegisterRequestDTO request) {
+    public ResponseEntity<ResponseDTO> register(@RequestBody final RegisterRequestDTO request) {
         ResponseDTO response = userService.register(request);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
     @GetMapping("/email/{email}")
-    public User getUserByEmail(@PathVariable String email) {
-            User user = userRepository.findByEmail(email).orElseThrow(() -> new BadRequestServiceException(Constant.EMAIL_NOT_FOUND + email));
-        Role role = roleRepository.findByUserId(user.getId());
-
-        UserWithRoleDTO dto = new UserWithRoleDTO();
-        dto.setId(user.getId());
-        dto.setEmail(user.getEmail());
-        dto.setRole(role.getRole());
-        return user;
+    public User getUserByEmail(@PathVariable final String email) {
+        return userService.getUserWithEmail(email);
     }
 }

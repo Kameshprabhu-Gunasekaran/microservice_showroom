@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class GlobalHandlerException {
 
     @ExceptionHandler(BadRequestServiceException.class)
-    public ResponseDTO handleBadRequestAlertException(BadRequestServiceException exception) {
+    public ResponseDTO handleBadRequestAlertException(final BadRequestServiceException exception) {
         exception.printStackTrace();
         return new ResponseDTO(
                 HttpStatus.BAD_REQUEST.value(),

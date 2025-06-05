@@ -19,12 +19,12 @@ public class TestRideController {
 
     private final TestRideService testRideService;
 
-    public TestRideController(TestRideService testRideService) {
+    public TestRideController(final TestRideService testRideService) {
         this.testRideService = testRideService;
     }
 
     @PostMapping("/create")
-    public ResponseDTO create(@RequestBody TestRide testRide) {
+    public ResponseDTO create(@RequestBody final TestRide testRide) {
         return this.testRideService.create(testRide);
     }
 
@@ -34,17 +34,17 @@ public class TestRideController {
     }
 
     @GetMapping("/retrieve/{id}")
-    public ResponseDTO retrieveById(@PathVariable("id") String id) {
+    public ResponseDTO retrieveById(@PathVariable("id") final String id) {
         return this.testRideService.retrieveById(id);
     }
 
     @PutMapping("/update/{id}")
-    public ResponseDTO update(@PathVariable("id") String id, @RequestBody TestRideDTO dto) {
+    public ResponseDTO update(@PathVariable("id") final String id, @RequestBody final TestRideDTO dto) {
         return this.testRideService.update(id, dto);
     }
 
     @DeleteMapping("/remove/{id}")
-    public ResponseDTO delete(@PathVariable("id") String id) {
+    public ResponseDTO delete(@PathVariable("id") final String id) {
         return this.testRideService.delete(id);
     }
 }
